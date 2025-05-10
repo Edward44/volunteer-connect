@@ -15,7 +15,7 @@ export default function Home() {
           Connect with Local Volunteer Opportunities
         </h1>
         <p className="text-lg text-gray-600 mb-6">
-          A better way for students and schools to discover, track, and verify community service hours and more.
+          A better way for students and schools to discover, track, and verify community service hours.
         </p>
         <a
           href="https://docs.google.com/forms/d/e/1FAIpQLSdg4hzAMflVj66gTZXXkqlHkh51i8G4Ft-u1NPMjsKmF243dg/viewform?usp=header"
