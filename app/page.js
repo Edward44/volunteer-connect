@@ -26,19 +26,33 @@ export default function HomePage() {
               Discover and share meaningful volunteer opportunities in your local community.
             </p>
             <div className="flex justify-center gap-4 flex-wrap">
-              <a
-                href="/opportunities"
-                className="text-white bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
-              >
-                Explore Opportunities
-              </a>
-              <a
-                href="/submit"
-                className="text-blue-600 border-2 border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-600 hover:text-white transition font-semibold"
-              >
-                Submit an Opportunity
-              </a>
-            </div>
+            <a
+           href="/opportunities"
+           className="text-white bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+           >
+            Explore Volunteering Opportunities
+          </a>
+           <a
+        href="/submit"
+        className="text-blue-600 border-2 border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-600 hover:text-white transition font-semibold"
+          >
+        Find Volunteers for Your Mission
+        </a>
+        <a
+    href="/signup/volunteer"
+    className="text-white bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+  >
+    Sign Up as a Volunteer
+  </a>
+  <a
+    href="/signup/organization"
+    className="text-white bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+  >
+    Sign Up as an Organization
+  </a>
+</div>
+
+
           </div>
         </section>
 
