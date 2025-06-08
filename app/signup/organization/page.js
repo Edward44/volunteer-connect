@@ -66,8 +66,8 @@ export default function OrganizationSignupPage() {
         <label className="block mb-4">
           <span className="text-gray-700">Industry </span>
           <textarea
-            name="mission"
-            value={formData.mission}
+            name="industry"
+            value={formData.industry}
             onChange={handleChange}
             required
             className="mt-1 block w-full border p-2 rounded"
