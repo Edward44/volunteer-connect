@@ -7,7 +7,7 @@ export default function Navbar() {
         {/* Logo/Brand */}
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-bold text-gray-900">
-            Volunteer<span className="text-emerald-600">Connect</span>
+            <span className="text-emerald-600">Bono</span>
           </Link>
         </div>
         

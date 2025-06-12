@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function OrganizationSignupPage() {
   const router = useRouter();
@@ -94,110 +95,174 @@ export default function OrganizationSignupPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600 mb-2">Join as an Organization</h1>
-          <p className="text-gray-600">Create your account to post volunteer opportunities</p>
+    <main className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <Link href="/" className="text-2xl font-bold text-gray-900">
+            Volunteer<span className="text-emerald-600">Connect</span>
+          </Link>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Organization Name *</label>
-            <input
-              type="text"
-              name="orgName"
-              value={formData.orgName}
-              onChange={handleChange}
-              className={`w-full border p-3 rounded-lg ${errors.orgName ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Your organization name"
-            />
-            {errors.orgName && <p className="text-red-500 text-sm mt-1">{errors.orgName}</p>}
+      <div className="flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Join as an Organization</h1>
+            <p className="text-gray-600">Create your account to start posting volunteer opportunities</p>
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Email Address *</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`w-full border p-3 rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="contact@yourorganization.org"
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Organization Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="orgName"
+                    value={formData.orgName}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      errors.orgName ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="Your organization name"
+                  />
+                  {errors.orgName && <p className="text-red-500 text-sm mt-1">{errors.orgName}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="contact@yourorganization.org"
+                  />
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location *
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      errors.location ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="City, State"
+                  />
+                  {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Website
+                  </label>
+                  <input
+                    type="url"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="https://yourorganization.org"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Industry/Mission *
+                </label>
+                <textarea
+                  name="industry"
+                  value={formData.industry}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    errors.industry ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  rows={3}
+                  placeholder="Describe your organization's mission and focus area"
+                />
+                {errors.industry && <p className="text-red-500 text-sm mt-1">{errors.industry}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Organization Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  rows={4}
+                  placeholder="Tell volunteers more about your organization, its history, values, and impact..."
+                />
+              </div>
+
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-emerald-800">
+                      Ready to make an impact?
+                    </h3>
+                    <div className="mt-2 text-sm text-emerald-700">
+                      <p>
+                        Once your account is created, you'll be able to post volunteer opportunities,
+                        manage applications, and connect with passionate volunteers in your community.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                }`}
+              >
+                {isSubmitting ? 'Creating Account...' : 'Create Organization Account'}
+              </button>
+            </form>
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Location *</label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className={`w-full border p-3 rounded-lg ${errors.location ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="City, State"
-            />
-            {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
+          <div className="text-center mt-8">
+            <p className="text-gray-600 mb-4">
+              Already have an account?{' '}
+              <Link href="/login" className="text-emerald-600 hover:text-emerald-700 font-medium">
+                Sign in here
+              </Link>
+            </p>
+            <p className="text-gray-600">
+              Looking to volunteer instead?{' '}
+              <Link href="/signup/volunteer" className="text-emerald-600 hover:text-emerald-700 font-medium">
+                Sign up as a volunteer
+              </Link>
+            </p>
           </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Industry/Mission *</label>
-            <textarea
-              name="industry"
-              value={formData.industry}
-              onChange={handleChange}
-              className={`w-full border p-3 rounded-lg ${errors.industry ? 'border-red-500' : 'border-gray-300'}`}
-              rows={3}
-              placeholder="Describe your organization's mission and focus area"
-            />
-            {errors.industry && <p className="text-red-500 text-sm mt-1">{errors.industry}</p>}
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Website</label>
-            <input
-              type="url"
-              name="website"
-              value={formData.website}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded-lg"
-              placeholder="https://yourorganization.org"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded-lg"
-              rows={3}
-              placeholder="Tell volunteers more about your organization..."
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3 px-4 rounded-lg font-semibold ${
-              isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700'
-            } text-white transition-colors`}
-          >
-            {isSubmitting ? 'Creating Account...' : 'Create Organization Account'}
-          </button>
-        </form>
-
-        <div className="text-center mt-6">
-          <p className="text-gray-600">
-            Already have an account?{' '}
-            <a href="/login" className="text-blue-600 hover:underline">
-              Sign in here
-            </a>
-          </p>
         </div>
       </div>
     </main>

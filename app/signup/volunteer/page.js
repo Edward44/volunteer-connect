@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function VolunteerSignupPage() {
   const router = useRouter();
@@ -93,111 +94,148 @@ export default function VolunteerSignupPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600 mb-2">Join as a Volunteer</h1>
-          <p className="text-gray-600">Create your account to start volunteering</p>
+    <main className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <Link href="/" className="text-2xl font-bold text-gray-900">
+            Volunteer<span className="text-emerald-600">Connect</span>
+          </Link>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Full Name *</label>
-            <input 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              className={`w-full border p-3 rounded-lg ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Enter your full name"
-            />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+      <div className="flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Join as a Volunteer</h1>
+            <p className="text-gray-600">Create your account to start making a difference</p>
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Email Address *</label>
-            <input 
-              type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              className={`w-full border p-3 rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="your.email@example.com"
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name *
+                </label>
+                <input 
+                  name="name" 
+                  value={formData.name} 
+                  onChange={handleChange} 
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your full name"
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address *
+                </label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  value={formData.email} 
+                  onChange={handleChange} 
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="your.email@example.com"
+                />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Location *
+                </label>
+                <input 
+                  name="location" 
+                  value={formData.location} 
+                  onChange={handleChange} 
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    errors.location ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="City, State"
+                />
+                {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <input 
+                  type="tel"
+                  name="phone" 
+                  value={formData.phone} 
+                  onChange={handleChange} 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  placeholder="(555) 123-4567"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Interests & Skills
+                </label>
+                <textarea 
+                  name="interests" 
+                  value={formData.interests} 
+                  onChange={handleChange} 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  rows={3}
+                  placeholder="What causes interest you? Any special skills you'd like to contribute?"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Availability
+                </label>
+                <select 
+                  name="availability" 
+                  value={formData.availability} 
+                  onChange={handleChange} 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                >
+                  <option value="">Select your availability</option>
+                  <option value="weekdays">Weekdays</option>
+                  <option value="weekends">Weekends</option>
+                  <option value="evenings">Evenings</option>
+                  <option value="flexible">Flexible</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                }`}
+              >
+                {isSubmitting ? 'Creating Account...' : 'Create Volunteer Account'}
+              </button>
+            </form>
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Location *</label>
-            <input 
-              name="location" 
-              value={formData.location} 
-              onChange={handleChange} 
-              className={`w-full border p-3 rounded-lg ${errors.location ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="City, State"
-            />
-            {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
+          <div className="text-center mt-8">
+            <p className="text-gray-600 mb-4">
+              Already have an account?{' '}
+              <Link href="/login" className="text-emerald-600 hover:text-emerald-700 font-medium">
+                Sign in here
+              </Link>
+            </p>
+            <p className="text-gray-600">
+              Want to post opportunities?{' '}
+              <Link href="/signup/organization" className="text-emerald-600 hover:text-emerald-700 font-medium">
+                Sign up as an organization
+              </Link>
+            </p>
           </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Phone Number</label>
-            <input 
-              type="tel"
-              name="phone" 
-              value={formData.phone} 
-              onChange={handleChange} 
-              className="w-full border border-gray-300 p-3 rounded-lg"
-              placeholder="(555) 123-4567"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Interests/Skills</label>
-            <textarea 
-              name="interests" 
-              value={formData.interests} 
-              onChange={handleChange} 
-              className="w-full border border-gray-300 p-3 rounded-lg"
-              rows={3}
-              placeholder="What causes interest you? Any special skills?"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Availability</label>
-            <select 
-              name="availability" 
-              value={formData.availability} 
-              onChange={handleChange} 
-              className="w-full border border-gray-300 p-3 rounded-lg"
-            >
-              <option value="">Select your availability</option>
-              <option value="weekdays">Weekdays</option>
-              <option value="weekends">Weekends</option>
-              <option value="evenings">Evenings</option>
-              <option value="flexible">Flexible</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3 px-4 rounded-lg font-semibold ${
-              isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700'
-            } text-white transition-colors`}
-          >
-            {isSubmitting ? 'Creating Account...' : 'Create Volunteer Account'}
-          </button>
-        </form>
-
-        <div className="text-center mt-6">
-          <p className="text-gray-600">
-            Already have an account?{' '}
-            <a href="/login" className="text-blue-600 hover:underline">
-              Sign in here
-            </a>
-          </p>
         </div>
       </div>
     </main>
