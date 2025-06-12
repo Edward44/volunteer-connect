@@ -10,130 +10,153 @@ export default function HomePage() {
       <Navbar />
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="text-center px-6 py-12 bg-white shadow-sm">
-          <div className="max-w-4xl mx-auto">
-            <Image
-              src="/DSC_0607.avif"
-              alt="Volunteering together"
-              width={900}
-              height={500}
-              className="rounded-xl shadow-md mx-auto mb-6"
-            />
-            <h1 className="text-4xl font-extrabold text-blue-600 mb-4">
-              Welcome to Volunteer Connect
-            </h1>
-            <p className="text-lg text-gray-700 mb-6">
-              Discover and share meaningful volunteer opportunities in your local community.
-            </p>
-            <div className="flex justify-center gap-4 flex-wrap">
-            <a
-           href="/opportunities"
-           className="text-white bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
-           >
-            Find Volunteering Opportunities
-          </a>
-           <a
-        href="/submit"
-        className="text-white bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
-          >
-        Find Volunteers for Your Mission
-        </a>
-        <a
-    href="/signup/volunteer"
-    className="text-blue-600 border-2 border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-600 hover:text-white transition font-semibold"
-  >
-    Sign Up as a Volunteer
-  </a>
-  <a
-    href="/signup/organization"
-    className="text-blue-600 border-2 border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-600 hover:text-white transition font-semibold"
-  >
-    Sign Up as an Organization
-  </a>
-</div>
-
-
+        <section className="bg-white">
+          <div className="max-w-6xl mx-auto px-6 py-16">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Connect volunteers with 
+                <span className="text-emerald-600"> meaningful causes</span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Discover volunteer opportunities in your community or find dedicated volunteers for your organization's mission.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a
+                  href="/opportunities"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl min-w-[200px]"
+                >
+                  Find Opportunities
+                </a>
+                <a
+                  href="/submit"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl min-w-[200px]"
+                >
+                  Post Opportunities
+                </a>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <Image
+                src="/DSC_0607.avif"
+                alt="Volunteers working together"
+                width={1200}
+                height={600}
+                className="rounded-2xl shadow-2xl mx-auto"
+              />
+            </div>
           </div>
         </section>
 
-        {/* Why Volunteer Section */}
-        <section className="px-6 py-16 bg-gray-100">
-          <h2 className="text-3xl font-bold text-blue-700 text-center mb-10">Why Volunteer?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                title: "Make an Impact",
-                img: "/DLXevents.avif",
-                desc: "Help local causes and communities thrive.",
-              },
-              {
-                title: "Build Skills",
-                img: "/DLXevents.avif",
-                desc: "Gain leadership and teamwork experience.",
-              },
-              {
-                title: "Meet People",
-                img: "/DLXevents.avif",
-                desc: "Connect with like-minded volunteers.",
-              },
-              {
-                title: "Earn Hours",
-                img: "/DLXevents.avif",
-                desc: "Track verified hours for school or work.",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-lg shadow-md text-center">
-                <Image
-                  src={item.img}
-                  alt={item.title}
-                  width={80}
-                  height={80}
-                  className="mx-auto mb-4"
-                />
-                <h3 className="text-xl font-semibold text-blue-600 mb-2">{item.title}</h3>
-                <p className="text-gray-700">{item.desc}</p>
-              </div>
-            ))}
+        {/* Benefits Section */}
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Why volunteer matters</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Volunteering creates positive change for both communities and individuals
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                {
+                  icon: "🌍",
+                  title: "Make an Impact",
+                  desc: "Create lasting change in your local community and beyond",
+                },
+                {
+                  icon: "💪",
+                  title: "Build Skills",
+                  desc: "Develop leadership, teamwork, and professional experience",
+                },
+                {
+                  icon: "🤝",
+                  title: "Connect",
+                  desc: "Meet like-minded people and build meaningful relationships",
+                },
+                {
+                  icon: "📊",
+                  title: "Track Progress",
+                  desc: "Log verified hours for school, work, or personal goals",
+                },
+              ].map((benefit, idx) => (
+                <div key={idx} className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="text-4xl mb-4">{benefit.icon}</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{benefit.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{benefit.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* How It Works Section */}
-        <section className="px-6 py-16 bg-white">
-          <h2 className="text-3xl font-bold text-blue-700 text-center mb-10">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                title: "1. Browse",
-                desc: "Search for local volunteering opportunities posted by organizations.",
-                img: "/DSC_0607.avif",
-              },
-              {
-                title: "2. Submit",
-                desc: "Organizations can post events or needs for volunteers.",
-                img: "/DSC_0607.avif",
-              },
-              {
-                title: "3. Track",
-                desc: "Keep a record of your hours and get verification for school or programs.",
-                img: "/DSC_0607.avif",
-              },
-            ].map((step, idx) => (
-              <div key={idx} className="bg-blue-50 p-6 rounded-lg shadow text-center">
-                <Image
-                  src={step.img}
-                  alt={step.title}
-                  width={70}
-                  height={70}
-                  className="mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-blue-700 mb-2">{step.title}</h3>
-                <p className="text-gray-700">{step.desc}</p>
-              </div>
-            ))}
+        <section className="py-20 bg-white">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">How it works</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Getting started is simple - whether you're looking to volunteer or need volunteers
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {[
+                {
+                  step: "01",
+                  title: "Browse Opportunities",
+                  desc: "Explore volunteer opportunities posted by local organizations that match your interests and schedule",
+                },
+                {
+                  step: "02",
+                  title: "Apply & Connect",
+                  desc: "Reach out to organizations directly and get involved with causes you care about",
+                },
+                {
+                  step: "03",
+                  title: "Make a Difference",
+                  desc: "Complete your volunteer work and track your impact while building valuable experience",
+                },
+              ].map((step, idx) => (
+                <div key={idx} className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full text-xl font-bold mb-6">
+                    {step.step}
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 bg-emerald-600">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-4xl font-bold text-white mb-6">Ready to get started?</h2>
+            <p className="text-xl text-emerald-100 mb-8">
+              Join our community of volunteers and organizations making a difference
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/signup/volunteer"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl min-w-[200px]"
+              >
+                Sign Up as Volunteer
+              </a>
+              <a
+                href="/signup/organization"
+                className="inline-flex items-center justify-center px-8 py-4 bg-emerald-700 text-white font-semibold rounded-lg hover:bg-emerald-800 transition-all duration-200 shadow-lg hover:shadow-xl min-w-[200px]"
+              >
+                Sign Up as Organization
+              </a>
+            </div>
           </div>
         </section>
       </main>
     </>
- 
   );
 }
