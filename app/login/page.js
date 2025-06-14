@@ -21,7 +21,7 @@ export default function LoginPage() {
     setError(''); // Clear error when user types
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.email.trim()) {
@@ -29,7 +29,15 @@ export default function LoginPage() {
       return;
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
     setIsSubmitting(true);
+    setError('');
 
     try {
       let user = null;
@@ -37,29 +45,48 @@ export default function LoginPage() {
       if (formData.userType === 'volunteer') {
         // Look for volunteer
         const volunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
-        user = volunteers.find(vol => vol.email.toLowerCase() === formData.email.toLowerCase());
+        user = volunteers.find(vol => 
+          vol.email && vol.email.toLowerCase() === formData.email.toLowerCase()
+        );
       } else {
         // Look for organization
         const organizations = JSON.parse(localStorage.getItem('organizations') || '[]');
-        user = organizations.find(org => org.email.toLowerCase() === formData.email.toLowerCase());
+        user = organizations.find(org => 
+          org.email && org.email.toLowerCase() === formData.email.toLowerCase()
+        );
       }
 
       if (user) {
-        // Login successful
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        // Add userType to user object if it doesn't exist
+        const userWithType = {
+          ...user,
+          userType: formData.userType
+        };
         
-        // Redirect based on user type
-        if (user.userType === 'volunteer') {
+        // Login successful - store user data
+        localStorage.setItem('currentUser', JSON.stringify(userWithType));
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // Add a small delay to ensure localStorage is written
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Navigate to home page or appropriate dashboard
+        // You can change this to the specific dashboard routes once they exist
+        router.push('/');
+        
+        // Alternative: Navigate to specific dashboards when those pages are created
+        if (user.userType === 'volunteer' || formData.userType === 'volunteer') {
           router.push('/dashboard/volunteer');
-        } else {
-          router.push('/dashboard/organization');
-        }
+         } else {
+           router.push('/dashboard/organization');
+         }
+        
       } else {
-        setError(`No ${formData.userType} account found with this email address.`);
+        setError(`No ${formData.userType} account found with this email address. Please check your email or sign up first.`);
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('Something went wrong. Please try again.');
+      setError('Something went wrong during login. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -146,6 +173,7 @@ export default function LoginPage() {
                       }`}
                       placeholder="Enter your email address"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -153,10 +181,10 @@ export default function LoginPage() {
                   {error && (
                     <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                       <div className="flex items-center">
-                        <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
-                        {error}
+                        <span className="text-sm">{error}</span>
                       </div>
                     </div>
                   )}
@@ -168,7 +196,7 @@ export default function LoginPage() {
                     className={`w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl ${
                       isSubmitting 
                         ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'bg-emerald-600 hover:bg-emerald-700'
+                        : 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800'
                     }`}
                   >
                     {isSubmitting ? (
@@ -245,3 +273,6 @@ export default function LoginPage() {
     </>
   );
 }
+
+// create opportunity page on org dashboard is great, might need to remove post a listing
+// worst case, change page view for both orgs and volunteers

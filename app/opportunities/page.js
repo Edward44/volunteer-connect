@@ -8,6 +8,15 @@ export default function OpportunitiesPage() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [showPostForm, setShowPostForm] = useState(false);
   const [opportunities, setOpportunities] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+  const [signupForm, setSignupForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
   const [newOpportunity, setNewOpportunity] = useState({
     title: '',
     organization: '',
@@ -73,10 +82,14 @@ export default function OpportunitiesPage() {
 
   const categories = ['all', 'Environment', 'Community', 'Education', 'Healthcare'];
 
-  // Load opportunities on component mount
+  // Load opportunities and current user on component mount
   useEffect(() => {
     const savedOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
     setOpportunities([...sampleOpportunities, ...savedOpportunities]);
+    
+    // Get current user from localStorage
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    setCurrentUser(user);
   }, []);
 
   // Save opportunities to localStorage
@@ -89,6 +102,14 @@ export default function OpportunitiesPage() {
   const handleInputChange = (e) => {
     setNewOpportunity({
       ...newOpportunity,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  // Handle signup form input changes
+  const handleSignupInputChange = (e) => {
+    setSignupForm({
+      ...signupForm,
       [e.target.name]: e.target.value
     });
   };
@@ -121,6 +142,100 @@ export default function OpportunitiesPage() {
     setShowPostForm(false);
   };
 
+  // Handle sign up button click
+  const handleSignUpClick = (opportunity) => {
+    if (!currentUser) {
+      // Redirect to login if not logged in
+      window.location.href = '/login';
+      return;
+    }
+
+    if (opportunity.volunteers >= opportunity.maxVolunteers) {
+      alert('Sorry, this opportunity is full!');
+      return;
+    }
+
+    // Check if user already applied
+    if (currentUser.userType === 'volunteer') {
+      const volunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
+      const currentVolunteer = volunteers.find(vol => vol.id === currentUser.id);
+      
+      if (currentVolunteer && currentVolunteer.appliedOpportunities && 
+          currentVolunteer.appliedOpportunities.includes(opportunity.id)) {
+        alert('You have already applied to this opportunity!');
+        return;
+      }
+    }
+
+    setSelectedOpportunity(opportunity);
+    
+    // Pre-fill form with user data if available
+    if (currentUser.userType === 'volunteer') {
+      setSignupForm({
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || '',
+        message: ''
+      });
+    } else {
+      setSignupForm({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+    }
+    
+    setShowSignupModal(true);
+  };
+
+  // Handle signup form submission
+  const handleSignupSubmit = (e) => {
+    e.preventDefault();
+    
+    // Update opportunity volunteer count
+    const updatedOpportunities = opportunities.map(opp => {
+      if (opp.id === selectedOpportunity.id) {
+        return { ...opp, volunteers: opp.volunteers + 1 };
+      }
+      return opp;
+    });
+    setOpportunities(updatedOpportunities);
+    saveOpportunities(updatedOpportunities);
+    
+    // If user is logged in as volunteer, update their applied opportunities
+    if (currentUser && currentUser.userType === 'volunteer') {
+      const volunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
+      const updatedVolunteers = volunteers.map(vol => {
+        if (vol.id === currentUser.id) {
+          const appliedOpportunities = vol.appliedOpportunities || [];
+          return {
+            ...vol,
+            appliedOpportunities: [...appliedOpportunities, selectedOpportunity.id]
+          };
+        }
+        return vol;
+      });
+      localStorage.setItem('volunteers', JSON.stringify(updatedVolunteers));
+      
+      // Update current user in localStorage
+      const updatedUser = {
+        ...currentUser,
+        appliedOpportunities: [...(currentUser.appliedOpportunities || []), selectedOpportunity.id]
+      };
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+    }
+    
+    // Close modal and reset form
+    setShowSignupModal(false);
+    setSignupForm({ name: '', email: '', phone: '', message: '' });
+    setSelectedOpportunity(null);
+    
+    // Show success message
+    alert('Successfully signed up! You will be contacted with more details.');
+  };
+
   const filteredOpportunities = opportunities.filter(opp => {
     const matchesSearch = opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          opp.organization.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -137,6 +252,12 @@ export default function OpportunitiesPage() {
       Healthcare: 'bg-red-100 text-red-800'
     };
     return colors[category] || 'bg-gray-100 text-gray-800';
+  };
+
+  // Check if user already applied to an opportunity
+  const hasUserApplied = (opportunityId) => {
+    if (!currentUser || currentUser.userType !== 'volunteer') return false;
+    return currentUser.appliedOpportunities && currentUser.appliedOpportunities.includes(opportunityId);
   };
 
   return (
@@ -333,6 +454,112 @@ export default function OpportunitiesPage() {
               </div>
             </div>
           )}
+
+          {/* Signup Modal */}
+          {showSignupModal && selectedOpportunity && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-xl max-w-lg w-full">
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-2xl font-bold text-gray-900">Sign Up to Volunteer</h3>
+                    <button
+                      onClick={() => setShowSignupModal(false)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-semibold text-gray-900">{selectedOpportunity.title}</h4>
+                    <p className="text-emerald-600">{selectedOpportunity.organization}</p>
+                    <p className="text-gray-600">{selectedOpportunity.date} • {selectedOpportunity.time}</p>
+                    <p className="text-gray-600">{selectedOpportunity.location}</p>
+                  </div>
+
+                  <form onSubmit={handleSignupSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={signupForm.name}
+                        onChange={handleSignupInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Your full name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={signupForm.email}
+                        onChange={handleSignupInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="your.email@example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={signupForm.phone}
+                        onChange={handleSignupInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Message (Optional)
+                      </label>
+                      <textarea
+                        name="message"
+                        value={signupForm.message}
+                        onChange={handleSignupInputChange}
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Tell us why you're interested or any relevant experience..."
+                      />
+                    </div>
+
+                    <div className="flex gap-4 pt-4">
+                      <button
+                        type="submit"
+                        className="flex-1 bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200"
+                      >
+                        Complete Sign Up
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowSignupModal(false)}
+                        className="flex-1 bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-400 transition-all duration-200"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Search and Filter Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
             <div className="flex flex-col md:flex-row gap-4">
@@ -405,7 +632,7 @@ export default function OpportunitiesPage() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4M3 13a4 4 0 014-4h10a4 4 0 014 4v6a4 4 0 01-4 4H7a4 4 0 01-4-4v-6z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4M3 13a4 4 0 714-4h10a4 4 0 014 4v6a4 4 0 01-4 4H7a4 4 0 01-4-4v-6z" />
                     </svg>
                     {opportunity.date}
                   </div>
@@ -437,9 +664,28 @@ export default function OpportunitiesPage() {
                 </div>
 
                 {/* Action Button */}
-                <button className="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg">
-                  Sign Up to Volunteer
-                </button>
+                {hasUserApplied(opportunity.id) ? (
+                  <button 
+                    disabled
+                    className="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-6 rounded-lg cursor-not-allowed"
+                  >
+                    Already Applied
+                  </button>
+                ) : opportunity.volunteers >= opportunity.maxVolunteers ? (
+                  <button 
+                    disabled
+                    className="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-6 rounded-lg cursor-not-allowed"
+                  >
+                    Opportunity Full
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => handleSignUpClick(opportunity)}
+                    className="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    Sign Up to Volunteer
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -452,8 +698,19 @@ export default function OpportunitiesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No opportunities found</h3>
-              <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No opportunities found</h3>
+              <p className="text-gray-600 mb-4">
+                Try adjusting your search terms or filters to find more opportunities.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setFilterCategory('all');
+                }}
+                className="bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-all duration-200"
+              >
+                Clear Filters
+              </button>
             </div>
           )}
         </div>
@@ -461,3 +718,5 @@ export default function OpportunitiesPage() {
     </>
   );
 }
+
+// signup count doesn't remove volunteers when you withdraw an application //
