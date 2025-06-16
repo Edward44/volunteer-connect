@@ -82,6 +82,7 @@ export default function OpportunitiesPage() {
 
   const categories = ['all', 'Environment', 'Community', 'Education', 'Healthcare'];
 
+
   // Load opportunities and current user on component mount
   useEffect(() => {
     const savedOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');

@@ -190,23 +190,6 @@ export default function VolunteerSignupPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Availability
-                </label>
-                <select 
-                  name="availability" 
-                  value={formData.availability} 
-                  onChange={handleChange} 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                >
-                  <option value="">Select your availability</option>
-                  <option value="weekdays">Weekdays</option>
-                  <option value="weekends">Weekends</option>
-                  <option value="evenings">Evenings</option>
-                  <option value="flexible">Flexible</option>
-                </select>
-              </div>
 
               <button
                 type="submit"
