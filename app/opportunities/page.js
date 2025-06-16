@@ -114,14 +114,43 @@ export default function OpportunitiesPage() {
     });
   };
 
+  // Handle Post Opportunity button click - Check authentication first
+  const handlePostOpportunityClick = () => {
+    if (!currentUser) {
+      // Show alert and redirect to login if not signed in
+      alert('Please sign in to post a volunteer opportunity.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Only organizations should be able to post opportunities
+    if (currentUser.userType !== 'organization') {
+      alert('Only organizations can post volunteer opportunities. Please sign in with an organization account.');
+      return;
+    }
+    
+    // If authenticated as organization, show the form
+    setShowPostForm(true);
+  };
+
   // Handle form submission
   const handleSubmitOpportunity = (e) => {
     e.preventDefault();
+    
+    // Double-check authentication (safety measure)
+    if (!currentUser || currentUser.userType !== 'organization') {
+      alert('Authentication error. Please sign in again.');
+      window.location.href = '/login';
+      return;
+    }
+    
     const opportunity = {
       ...newOpportunity,
       id: Date.now(), // Simple ID generation
       volunteers: 0,
-      maxVolunteers: parseInt(newOpportunity.maxVolunteers)
+      maxVolunteers: parseInt(newOpportunity.maxVolunteers),
+      postedBy: currentUser.id, // Track who posted this opportunity
+      postedByName: currentUser.name || currentUser.organizationName || 'Unknown Organization'
     };
     
     const updatedOpportunities = [...opportunities, opportunity];
@@ -140,6 +169,9 @@ export default function OpportunitiesPage() {
       maxVolunteers: 10
     });
     setShowPostForm(false);
+    
+    // Show success message
+    alert('Opportunity posted successfully!');
   };
 
   // Handle sign up button click
@@ -284,7 +316,7 @@ export default function OpportunitiesPage() {
               <p className="text-gray-600 mt-1">Find the perfect way to make a difference</p>
             </div>
             <button
-              onClick={() => setShowPostForm(true)}
+              onClick={handlePostOpportunityClick}
               className="bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
             >
               Post New Opportunity
@@ -681,42 +713,29 @@ export default function OpportunitiesPage() {
                 ) : (
                   <button 
                     onClick={() => handleSignUpClick(opportunity)}
-                    className="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
-                  >
-                    Sign Up to Volunteer
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
+                   className="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200"
+                 >
+                   Sign Up
+                 </button>
+               )}
+             </div>
+           ))}
+         </div>
 
-          {/* No Results Message */}
-          {filteredOpportunities.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No opportunities found</h3>
-              <p className="text-gray-600 mb-4">
-                Try adjusting your search terms or filters to find more opportunities.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setFilterCategory('all');
-                }}
-                className="bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-all duration-200"
-              >
-                Clear Filters
-              </button>
-            </div>
-          )}
-        </div>
-      </main>
-    </>
-  );
+         {/* No Results Message */}
+         {filteredOpportunities.length === 0 && (
+           <div className="text-center py-12">
+             <div className="text-gray-400 mb-4">
+               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.441.935-6.001 2.456M16 21v-2a4 4 0 00-3-3.87M8 21v-2a4 4 0 013-3.87M12 3v2.25" />
+               </svg>
+             </div>
+             <h3 className="text-xl font-medium text-gray-900 mb-2">No opportunities found</h3>
+             <p className="text-gray-500">Try adjusting your search criteria or check back later for new opportunities.</p>
+           </div>
+         )}
+       </div>
+     </main>
+   </>
+ );
 }
-
-// signup count doesn't remove volunteers when you withdraw an application //
