@@ -762,6 +762,7 @@ export default function OpportunitiesPage() {
               </p>
             </div>
           )}
+          
         </div>
       </main>
     </>
