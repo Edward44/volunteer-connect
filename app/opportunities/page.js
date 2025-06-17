@@ -25,10 +25,11 @@ export default function OpportunitiesPage() {
     time: '',
     category: '',
     description: '',
-    maxVolunteers: 10
+    maxVolunteers: 10,
+    volunteerHours: 3
   });
 
-  // Sample opportunities data (initial data)
+  // Sample opportunities data (initial data) - Updated with volunteer hours
   const sampleOpportunities = [
     {
       id: 1,
@@ -40,7 +41,8 @@ export default function OpportunitiesPage() {
       category: "Environment",
       description: "Join us for a morning of beach cleanup to protect marine life and keep our coastlines beautiful.",
       volunteers: 12,
-      maxVolunteers: 20
+      maxVolunteers: 20,
+      volunteerHours: 3
     },
     {
       id: 2,
@@ -52,7 +54,8 @@ export default function OpportunitiesPage() {
       category: "Community",
       description: "Help sort and distribute food to families in need. No experience required - training provided.",
       volunteers: 8,
-      maxVolunteers: 15
+      maxVolunteers: 15,
+      volunteerHours: 4
     },
     {
       id: 3,
@@ -64,7 +67,8 @@ export default function OpportunitiesPage() {
       category: "Education",
       description: "Support elementary students with reading skills through one-on-one tutoring sessions.",
       volunteers: 5,
-      maxVolunteers: 10
+      maxVolunteers: 10,
+      volunteerHours: 2
     },
     {
       id: 4,
@@ -76,7 +80,8 @@ export default function OpportunitiesPage() {
       category: "Healthcare",
       description: "Lead recreational activities and provide companionship for seniors in our community.",
       volunteers: 3,
-      maxVolunteers: 8
+      maxVolunteers: 8,
+      volunteerHours: 3
     }
   ];
 
@@ -150,6 +155,7 @@ export default function OpportunitiesPage() {
       id: Date.now(), // Simple ID generation
       volunteers: 0,
       maxVolunteers: parseInt(newOpportunity.maxVolunteers),
+      volunteerHours: parseFloat(newOpportunity.volunteerHours),
       postedBy: currentUser.id, // Track who posted this opportunity
       postedByName: currentUser.name || currentUser.organizationName || 'Unknown Organization'
     };
@@ -167,7 +173,8 @@ export default function OpportunitiesPage() {
       time: '',
       category: '',
       description: '',
-      maxVolunteers: 10
+      maxVolunteers: 10,
+      volunteerHours: 3
     });
     setShowPostForm(false);
     
@@ -408,7 +415,7 @@ export default function OpportunitiesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Date *
@@ -448,6 +455,22 @@ export default function OpportunitiesPage() {
                           required
                           min="1"
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Volunteer Hours *
+                        </label>
+                        <input
+                          type="number"
+                          name="volunteerHours"
+                          value={newOpportunity.volunteerHours}
+                          onChange={handleInputChange}
+                          required
+                          min="0.5"
+                          step="0.5"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                          placeholder="e.g., 3"
                         />
                       </div>
                     </div>
@@ -510,6 +533,9 @@ export default function OpportunitiesPage() {
                     <p className="text-emerald-600">{selectedOpportunity.organization}</p>
                     <p className="text-gray-600">{selectedOpportunity.date} • {selectedOpportunity.time}</p>
                     <p className="text-gray-600">{selectedOpportunity.location}</p>
+                    <p className="text-gray-600 mt-2">
+                      <span className="font-medium">Volunteer Hours:</span> {selectedOpportunity.volunteerHours} hours
+                    </p>
                   </div>
 
                   <form onSubmit={handleSignupSubmit} className="space-y-4">
@@ -643,10 +669,13 @@ export default function OpportunitiesPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredOpportunities.map(opportunity => (
               <div key={opportunity.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                {/* Category Badge */}
-                <div className="mb-4">
+                {/* Category Badge and Hours */}
+                <div className="mb-4 flex justify-between items-center">
                   <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(opportunity.category)}`}>
                     {opportunity.category}
+                  </span>
+                  <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                    {opportunity.volunteerHours} {opportunity.volunteerHours === 1 ? 'hour' : 'hours'}
                   </span>
                 </div>
 
@@ -678,65 +707,63 @@ export default function OpportunitiesPage() {
                 </div>
 
                 {/* Description */}
-                <p className="text-gray-600 mb-4 line-clamp-3">{opportunity.description}</p>
+                <p className="text-gray-600 mb-4 text-sm leading-relaxed">{opportunity.description}</p>
 
                 {/* Volunteer Count */}
                 <div className="mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-600">Volunteers</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {opportunity.volunteers}/{opportunity.maxVolunteers}
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span>
+                      {opportunity.volunteers}/{opportunity.maxVolunteers} volunteers
                     </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-emerald-600 h-2 rounded-full transition-all"
-                      style={{ width: `${(opportunity.volunteers / opportunity.maxVolunteers) * 100}%` }}
-                    ></div>
+                    <div className="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min((opportunity.volunteers / opportunity.maxVolunteers) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                    <span className={opportunity.volunteers >= opportunity.maxVolunteers ? 'text-red-500 font-medium' : ''}>
+                      {opportunity.volunteers >= opportunity.maxVolunteers ? 'Full' : 'Available'}
+                    </span>
                   </div>
                 </div>
 
                 {/* Action Button */}
-                {hasUserApplied(opportunity.id) ? (
-                  <button 
-                    disabled
-                    className="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-6 rounded-lg cursor-not-allowed"
-                  >
-                    Already Applied
-                  </button>
-                ) : opportunity.volunteers >= opportunity.maxVolunteers ? (
-                  <button 
-                    disabled
-                    className="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-6 rounded-lg cursor-not-allowed"
-                  >
-                    Opportunity Full
-                  </button>
-                ) : (
-                  <button 
-                    onClick={() => handleSignUpClick(opportunity)}
-                   className="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200"
-                 >
-                   Sign Up
-                 </button>
-               )}
-             </div>
-           ))}
-         </div>
+                <button
+                  onClick={() => handleSignUpClick(opportunity)}
+                  disabled={opportunity.volunteers >= opportunity.maxVolunteers || hasUserApplied(opportunity.id)}
+                  className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
+                    opportunity.volunteers >= opportunity.maxVolunteers || hasUserApplied(opportunity.id)
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md'
+                  }`}
+                >
+                  {hasUserApplied(opportunity.id) 
+                    ? 'Already Applied' 
+                    : opportunity.volunteers >= opportunity.maxVolunteers 
+                      ? 'Opportunity Full' 
+                      : 'Sign Up to Volunteer'
+                  }
+                </button>
+              </div>
+            ))}
+          </div>
 
-         {/* No Results Message */}
-         {filteredOpportunities.length === 0 && (
-           <div className="text-center py-12">
-             <div className="text-gray-400 mb-4">
-               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.441.935-6.001 2.456M16 21v-2a4 4 0 00-3-3.87M8 21v-2a4 4 0 013-3.87M12 3v2.25" />
-               </svg>
-             </div>
-             <h3 className="text-xl font-medium text-gray-900 mb-2">No opportunities found</h3>
-             <p className="text-gray-500">Try adjusting your search criteria or check back later for new opportunities.</p>
-           </div>
-         )}
-       </div>
-     </main>
-   </>
- );
+          {/* No Results Message */}
+          {filteredOpportunities.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.34-1.263-5.452-3.151M5 6.757l.707.707a1 1 0 001.414 0l.707-.707a1 1 0 000-1.414l-.707-.707a1 1 0 00-1.414 0L5 6.757v0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No opportunities found</h3>
+              <p className="text-gray-600">
+                Try adjusting your search terms or category filter to find more opportunities.
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
+  );
 }
