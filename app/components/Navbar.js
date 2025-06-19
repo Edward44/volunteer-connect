@@ -46,8 +46,12 @@ export default function Navbar() {
           <Link href="/submit" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
             Post Listing
           </Link>
+          <Link href="/about" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            About Us
+          </Link>
+          {/* Hidden My Account link for navigation purposes */}
           {currentUser && (
-            <Link href={getAccountUrl()} className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            <Link href={getAccountUrl()} className="sr-only">
               My Account
             </Link>
           )}
@@ -98,8 +102,6 @@ export default function Navbar() {
                     </div>
                   </Link>
                   
-
-                  
                   <hr className="my-2" />
                   
                   <button 
@@ -138,16 +140,20 @@ export default function Navbar() {
         <Link href="/submit" className="text-gray-700 hover:text-emerald-600 font-medium py-2">
           Post Listing
         </Link>
+        <Link href="/about" className="text-gray-700 hover:text-emerald-600 font-medium py-2">
+          About Us
+        </Link>
         {currentUser && (
           <>
-            <Link href={getAccountUrl()} className="text-gray-700 hover:text-emerald-600 font-medium py-2">
-              My Account
-            </Link>
             <Link 
-              href={currentUser.userType === 'volunteer' ? '/dashboard/volunteer' : '/dashboard/organization'} 
+              href={currentUser.userType === 'volunteer' ? '/account/volunteer' : '/account/organization'} 
               className="text-gray-700 hover:text-emerald-600 font-medium py-2"
             >
               Dashboard
+            </Link>
+            {/* Hidden My Account link for mobile navigation purposes */}
+            <Link href={getAccountUrl()} className="sr-only">
+              My Account
             </Link>
             <button 
               onClick={handleLogout}
