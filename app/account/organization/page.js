@@ -10,15 +10,6 @@ export default function OrganizationDashboard() {
   const [myOpportunities, setMyOpportunities] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newOpportunity, setNewOpportunity] = useState({
-    title: '',
-    description: '',
-    location: '',
-    date: '',
-    category: 'Community Service',
-    requirements: ''
-  });
 
   useEffect(() => {
     // Check if user is logged in and is an organization
@@ -58,44 +49,6 @@ export default function OrganizationDashboard() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('isLoggedIn');
     router.push('/');
-  };
-
-  const handleCreateOpportunity = (e) => {
-    e.preventDefault();
-    
-    if (!currentUser) return;
-
-    try {
-      const opportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
-      const opportunity = {
-        id: Date.now(),
-        ...newOpportunity,
-        organizationId: currentUser.id,
-        organization: currentUser.name,
-        createdAt: new Date().toISOString(),
-        applicants: 0
-      };
-
-      opportunities.push(opportunity);
-      localStorage.setItem('opportunities', JSON.stringify(opportunities));
-      
-      // Reset form and refresh data
-      setNewOpportunity({
-        title: '',
-        description: '',
-        location: '',
-        date: '',
-        category: 'Community Service',
-        requirements: ''
-      });
-      setShowCreateForm(false);
-      loadDashboardData(currentUser);
-      
-      alert('Opportunity created successfully!');
-    } catch (error) {
-      console.error('Error creating opportunity:', error);
-      alert('Error creating opportunity. Please try again.');
-    }
   };
 
   const handleApplicationStatus = (applicationId, newStatus) => {
@@ -166,7 +119,7 @@ export default function OrganizationDashboard() {
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
                 <button
-                  onClick={() => setShowCreateForm(true)}
+                  onClick={() => router.push('/submit')}
                   className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
                 >
                   Create Opportunity
@@ -249,140 +202,6 @@ export default function OrganizationDashboard() {
           </div>
         </section>
 
-        {/* Create Opportunity Modal */}
-        {showCreateForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-2xl w-full max-h-screen overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">Create New Opportunity</h2>
-                  <button
-                    onClick={() => setShowCreateForm(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                <form onSubmit={handleCreateOpportunity} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Opportunity Title
-                    </label>
-                    <input
-                      type="text"
-                      value={newOpportunity.title}
-                      onChange={(e) => setNewOpportunity({...newOpportunity, title: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                      placeholder="e.g., Community Garden Cleanup"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      value={newOpportunity.description}
-                      onChange={(e) => setNewOpportunity({...newOpportunity, description: e.target.value})}
-                      rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                      placeholder="Describe the volunteer opportunity..."
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        value={newOpportunity.location}
-                        onChange={(e) => setNewOpportunity({...newOpportunity, location: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="e.g., Central Park, NYC"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Date & Time
-                      </label>
-                      <input
-                        type="text"
-                        value={newOpportunity.date}
-                        onChange={(e) => setNewOpportunity({...newOpportunity, date: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="e.g., Saturday, Dec 15, 2024 at 9:00 AM"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Category
-                      </label>
-                      <select
-                        value={newOpportunity.category}
-                        onChange={(e) => setNewOpportunity({...newOpportunity, category: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                      >
-                        <option value="Community Service">Community Service</option>
-                        <option value="Education">Education</option>
-                        <option value="Environment">Environment</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Animal Welfare">Animal Welfare</option>
-                        <option value="Disaster Relief">Disaster Relief</option>
-                        <option value="Youth Development">Youth Development</option>
-                        <option value="Senior Care">Senior Care</option>
-                        <option value="Arts & Culture">Arts & Culture</option>
-                        <option value="Food & Hunger">Food & Hunger</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Requirements
-                      </label>
-                      <input
-                        type="text"
-                        value={newOpportunity.requirements}
-                        onChange={(e) => setNewOpportunity({...newOpportunity, requirements: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="e.g., Must be 16+, comfortable outdoors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowCreateForm(false)}
-                      className="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
-                    >
-                      Create Opportunity
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* My Opportunities Section */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
@@ -398,7 +217,7 @@ export default function OrganizationDashboard() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No opportunities yet</h3>
                 <p className="text-gray-600 mb-4">Create your first volunteer opportunity to get started!</p>
                 <button
-                  onClick={() => setShowCreateForm(true)}
+                  onClick={() => router.push('/submit')}
                   className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
                 >
                   Create Opportunity

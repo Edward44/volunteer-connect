@@ -8,7 +8,6 @@ export default function OpportunitiesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
-  const [showPostForm, setShowPostForm] = useState(false);
   const [opportunities, setOpportunities] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [showSignupModal, setShowSignupModal] = useState(false);
@@ -18,17 +17,6 @@ export default function OpportunitiesPage() {
     email: '',
     phone: '',
     message: ''
-  });
-  const [newOpportunity, setNewOpportunity] = useState({
-    title: '',
-    organization: '',
-    location: '',
-    date: '',
-    time: '',
-    category: '',
-    description: '',
-    maxVolunteers: 10,
-    volunteerHours: 3
   });
 
   // Sample opportunities data (initial data) - Updated with volunteer hours
@@ -105,14 +93,6 @@ export default function OpportunitiesPage() {
     localStorage.setItem('opportunities', JSON.stringify(customOpportunities));
   };
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    setNewOpportunity({
-      ...newOpportunity,
-      [e.target.name]: e.target.value
-    });
-  };
-
   // Handle signup form input changes
   const handleSignupInputChange = (e) => {
     setSignupForm({
@@ -121,12 +101,12 @@ export default function OpportunitiesPage() {
     });
   };
 
-  // Handle Post Opportunity button click - Check authentication first
+  // Handle Post Opportunity button click - Navigate to submit page
   const handlePostOpportunityClick = () => {
     if (!currentUser) {
       // Show alert and redirect to login if not signed in
       alert('Please sign in to post a volunteer opportunity.');
-      window.location.href = '/login';
+      router.push('/login');
       return;
     }
     
@@ -136,51 +116,8 @@ export default function OpportunitiesPage() {
       return;
     }
     
-    // If authenticated as organization, show the form
-    setShowPostForm(true);
-  };
-
-  // Handle form submission
-  const handleSubmitOpportunity = (e) => {
-    e.preventDefault();
-    
-    // Double-check authentication (safety measure)
-    if (!currentUser || currentUser.userType !== 'organization') {
-      alert('Authentication error. Please sign in again.');
-      window.location.href = '/login';
-      return;
-    }
-    
-    const opportunity = {
-      ...newOpportunity,
-      id: Date.now(), // Simple ID generation
-      volunteers: 0,
-      maxVolunteers: parseInt(newOpportunity.maxVolunteers),
-      volunteerHours: parseFloat(newOpportunity.volunteerHours),
-      postedBy: currentUser.id, // Track who posted this opportunity
-      postedByName: currentUser.name || currentUser.organizationName || 'Unknown Organization'
-    };
-    
-    const updatedOpportunities = [...opportunities, opportunity];
-    setOpportunities(updatedOpportunities);
-    saveOpportunities(updatedOpportunities);
-    
-    // Reset form
-    setNewOpportunity({
-      title: '',
-      organization: '',
-      location: '',
-      date: '',
-      time: '',
-      category: '',
-      description: '',
-      maxVolunteers: 10,
-      volunteerHours: 3
-    });
-    setShowPostForm(false);
-    
-    // Show success message
-    alert('Opportunity posted successfully!');
+    // Navigate to submit page
+    router.push('/submit');
   };
 
   // Handle delete opportunity
@@ -221,7 +158,7 @@ export default function OpportunitiesPage() {
   const handleSignUpClick = (opportunity) => {
     if (!currentUser) {
       // Redirect to login if not logged in
-      window.location.href = '/login';
+      router.push('/login');
       return;
     }
 
@@ -359,16 +296,15 @@ export default function OpportunitiesPage() {
               <p className="text-gray-600 mt-1">Find the perfect way to make a difference</p>
             </div>
             
-
-<button
-  onClick={handlePostOpportunityClick}
-  className="bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
->
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-  </svg>
-  Post New Opportunity
-</button>
+            <button
+              onClick={handlePostOpportunityClick}
+              className="bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Post New Opportunity
+            </button>
           </div>
 
           {/* Search and Filter Section */}
