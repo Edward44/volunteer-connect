@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../components/Navbar';
+import Link from 'next/link';
 
 export default function PostOpportunityPage() {
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     organization: '',
@@ -14,7 +17,7 @@ export default function PostOpportunityPage() {
     time: '',
     category: '',
     description: '',
-    maxVolunteers: 10,
+    maxVolunteers: '',
     contactEmail: '',
     contactPhone: '',
     requirements: '',
@@ -27,6 +30,22 @@ export default function PostOpportunityPage() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const categories = ['Environment', 'Community', 'Education', 'Healthcare', 'Sports & Recreation', 'Arts & Culture', 'Animal Welfare', 'Senior Care'];
+
+  // Check authentication on component mount
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    setCurrentUser(user);
+    setIsLoading(false);
+    
+    // Pre-fill organization and contact email if user is logged in
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        organization: user.userType === 'organization' ? user.orgName : '',
+        contactEmail: user.email || ''
+      }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -54,6 +73,7 @@ export default function PostOpportunityPage() {
     if (!formData.time.trim()) newErrors.time = 'Time is required';
     if (!formData.category) newErrors.category = 'Category is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.volunteerHours.trim()) newErrors.volunteerHours = 'Please enter the duration of this opportunity';
     if (!formData.contactEmail.trim()) newErrors.contactEmail = 'Contact email is required';
     if (!formData.contactEmail.includes('@')) newErrors.contactEmail = 'Please enter a valid email';
     if (formData.maxVolunteers < 1) newErrors.maxVolunteers = 'Must need at least 1 volunteer';
@@ -76,11 +96,12 @@ export default function PostOpportunityPage() {
         ...formData,
         volunteers: 0,
         datePosted: new Date().toISOString(),
-        status: 'active'
+        status: 'active',
+        postedBy: currentUser.id,
+        postedByName: currentUser.userType === 'organization' ? currentUser.orgName : currentUser.name
       };
 
-      // Get existing opportunities from localStorage (note: this won't work in Claude artifacts)
-      // In a real app, you'd want to use a database or API
+      // Get existing opportunities from localStorage
       const existingOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
       
       // Add new opportunity
@@ -95,14 +116,14 @@ export default function PostOpportunityPage() {
       // Clear form
       setFormData({
         title: '',
-        organization: '',
+        organization: currentUser.userType === 'organization' ? currentUser.orgName : '',
         location: '',
         date: '',
         time: '',
         category: '',
         description: '',
-        maxVolunteers: 10,
-        contactEmail: '',
+        maxVolunteers: '',
+        contactEmail: currentUser.email || '',
         contactPhone: '',
         requirements: '',
         benefits: '',
@@ -123,6 +144,97 @@ export default function PostOpportunityPage() {
     }
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  // Show login required message if user is not authenticated
+  if (!currentUser) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen bg-gray-50">
+          <div className="max-w-4xl mx-auto px-6 py-16">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Login Required</h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                You need to be logged in to post volunteer opportunities. Please sign in to your account or create one to get started.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link 
+                  href="/login" 
+                  className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Sign In
+                </Link>
+                
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Link 
+                    href="/signup/organization" 
+                    className="inline-flex items-center justify-center px-6 py-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
+                  >
+                    <span className="mr-2">🏢</span>
+                    Sign Up as Organization
+                  </Link>
+                  <Link 
+                    href="/signup/volunteer" 
+                    className="inline-flex items-center justify-center px-6 py-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
+                  >
+                    <span className="mr-2">🤝</span>
+                    Sign Up as Volunteer
+                  </Link>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Why do I need to login?</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-2xl mb-2">🔒</div>
+                    <h4 className="font-medium text-gray-900 mb-2">Security</h4>
+                    <p className="text-sm text-gray-600">Protect your posted opportunities and manage them securely</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-2xl mb-2">⚡</div>
+                    <h4 className="font-medium text-gray-900 mb-2">Easy Management</h4>
+                    <p className="text-sm text-gray-600">Edit, update, and track your volunteer opportunities</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-2xl mb-2">📊</div>
+                    <h4 className="font-medium text-gray-900 mb-2">Analytics</h4>
+                    <p className="text-sm text-gray-600">See how many volunteers are interested in your opportunities</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  // Show the form if user is authenticated
   return (
     <>
       <Navbar />
@@ -135,6 +247,10 @@ export default function PostOpportunityPage() {
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                 Connect with passionate volunteers in your community and make a difference together
               </p>
+              <div className="mt-4 flex items-center justify-center text-sm text-gray-500">
+                <span className="mr-2">👋</span>
+                Welcome back, {currentUser.userType === 'organization' ? currentUser.orgName : currentUser.name}!
+              </div>
             </div>
           </div>
         </div>
@@ -192,6 +308,39 @@ export default function PostOpportunityPage() {
                       placeholder="Your organization name"
                     />
                     {errors.organization && <p className="text-red-500 text-sm mt-1">{errors.organization}</p>}
+                  </div>
+                </div>
+              </div><div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Contact Email *
+                    </label>
+                    <input
+                      type="email"
+                      name="contactEmail"
+                      value={formData.contactEmail}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                        errors.contactEmail ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="contact@yourorganization.org"
+                    />
+                    {errors.contactEmail && <p className="text-red-500 text-sm mt-1">{errors.contactEmail}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Contact Phone (Optional)
+                    </label>
+                    <input
+                      type="tel"
+                      name="contactPhone"
+                      value={formData.contactPhone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                      placeholder="(555) 123-4567"
+                    />
                   </div>
                 </div>
               </div>
@@ -316,16 +465,19 @@ export default function PostOpportunityPage() {
               {/* Volunteer Hours */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Volunteer Hours
+                  Volunteer Hours *
                 </label>
                 <input
                   type="text"
                   name="volunteerHours"
                   value={formData.volunteerHours}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                  placeholder="How many volunteer hours is this opportunity?"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    errors.volunteerHours ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="e.g., 3 hours, Half day, Full day"
                 />
+                {errors.volunteerHours && <p className="text-red-500 text-sm mt-1">{errors.volunteerHours}</p>}
               </div>
 
               {/* Requirements */}
@@ -359,41 +511,7 @@ export default function PostOpportunityPage() {
               </div>
 
               {/* Contact Information */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Contact Email *
-                    </label>
-                    <input
-                      type="email"
-                      name="contactEmail"
-                      value={formData.contactEmail}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
-                        errors.contactEmail ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="contact@yourorganization.org"
-                    />
-                    {errors.contactEmail && <p className="text-red-500 text-sm mt-1">{errors.contactEmail}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Contact Phone (Optional)
-                    </label>
-                    <input
-                      type="tel"
-                      name="contactPhone"
-                      value={formData.contactPhone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-                </div>
-              </div>
+              
 
               {/* Submit Button */}
               <div className="flex gap-4 pt-6 border-t border-gray-200">

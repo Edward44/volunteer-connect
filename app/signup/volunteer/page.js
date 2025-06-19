@@ -82,7 +82,7 @@ export default function VolunteerSignupPage() {
       localStorage.setItem('currentUser', JSON.stringify(newVolunteer));
       
       // Success! Redirect to dashboard
-      alert('Account created successfully! Welcome to Volunteer Connect!');
+      alert('Account created successfully! Welcome to Bono!');
       router.push('/dashboard/volunteer');
       
     } catch (error) {
@@ -99,7 +99,7 @@ export default function VolunteerSignupPage() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <Link href="/" className="text-2xl font-bold text-gray-900">
-            Volunteer<span className="text-emerald-600">Connect</span>
+            <span className="text-emerald-600">Bono</span>
           </Link>
         </div>
       </div>

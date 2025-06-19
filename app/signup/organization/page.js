@@ -83,7 +83,7 @@ export default function OrganizationSignupPage() {
       localStorage.setItem('currentUser', JSON.stringify(newOrganization));
       
       // Success! Redirect to dashboard
-      alert('Organization account created successfully! Welcome to Volunteer Connect!');
+      alert('Organization account created successfully! Welcome to Bono!');
       router.push('/dashboard/organization');
       
     } catch (error) {
@@ -100,7 +100,7 @@ export default function OrganizationSignupPage() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <Link href="/" className="text-2xl font-bold text-gray-900">
-            Volunteer<span className="text-emerald-600">Connect</span>
+            <span className="text-emerald-600">Bono</span>
           </Link>
         </div>
       </div>

@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import { useRouter } from 'next/navigation';
 
 export default function OpportunitiesPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [showPostForm, setShowPostForm] = useState(false);
@@ -86,7 +88,6 @@ export default function OpportunitiesPage() {
   ];
 
   const categories = ['all', 'Environment', 'Community', 'Education', 'Healthcare'];
-
 
   // Load opportunities and current user on component mount
   useEffect(() => {
@@ -180,6 +181,40 @@ export default function OpportunitiesPage() {
     
     // Show success message
     alert('Opportunity posted successfully!');
+  };
+
+  // Handle delete opportunity
+  const handleDeleteOpportunity = (opportunityId) => {
+    const opportunity = opportunities.find(opp => opp.id === opportunityId);
+    
+    // Check if user is authorized to delete this opportunity
+    if (!currentUser || currentUser.userType !== 'organization') {
+      alert('Only organizations can delete opportunities.');
+      return;
+    }
+    
+    // Check if this opportunity was posted by the current user
+    if (opportunity.postedBy && opportunity.postedBy !== currentUser.id) {
+      alert('You can only delete opportunities that you posted.');
+      return;
+    }
+    
+    // Confirm deletion
+    if (window.confirm(`Are you sure you want to delete "${opportunity.title}"? This action cannot be undone.`)) {
+      const updatedOpportunities = opportunities.filter(opp => opp.id !== opportunityId);
+      setOpportunities(updatedOpportunities);
+      saveOpportunities(updatedOpportunities);
+      alert('Opportunity deleted successfully.');
+    }
+  };
+
+  // Function to check if current user can delete an opportunity
+  const canDeleteOpportunity = (opportunity) => {
+    if (!currentUser || currentUser.userType !== 'organization') return false;
+    // For sample opportunities (id <= 1000), check if user is logged in as organization
+    if (opportunity.id <= 1000) return true;
+    // For custom opportunities, check if posted by current user
+    return opportunity.postedBy === currentUser.id;
   };
 
   // Handle sign up button click
@@ -323,301 +358,18 @@ export default function OpportunitiesPage() {
               <h2 className="text-2xl font-bold text-gray-900">Available Opportunities</h2>
               <p className="text-gray-600 mt-1">Find the perfect way to make a difference</p>
             </div>
-            <button
-              onClick={handlePostOpportunityClick}
-              className="bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              Post New Opportunity
-            </button>
+            
+
+<button
+  onClick={handlePostOpportunityClick}
+  className="bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+>
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+  Post New Opportunity
+</button>
           </div>
-
-          {/* Post Opportunity Form Modal */}
-          {showPostForm && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900">Post New Opportunity</h3>
-                    <button
-                      onClick={() => setShowPostForm(false)}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <form onSubmit={handleSubmitOpportunity} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Title *
-                        </label>
-                        <input
-                          type="text"
-                          name="title"
-                          value={newOpportunity.title}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                          placeholder="Opportunity title"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Organization *
-                        </label>
-                        <input
-                          type="text"
-                          name="organization"
-                          value={newOpportunity.organization}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                          placeholder="Your organization"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Location *
-                        </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={newOpportunity.location}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                          placeholder="Address or location"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Category *
-                        </label>
-                        <select
-                          name="category"
-                          value={newOpportunity.category}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        >
-                          <option value="">Select category</option>
-                          <option value="Environment">Environment</option>
-                          <option value="Community">Community</option>
-                          <option value="Education">Education</option>
-                          <option value="Healthcare">Healthcare</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Date *
-                        </label>
-                        <input
-                          type="date"
-                          name="date"
-                          value={newOpportunity.date}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Time *
-                        </label>
-                        <input
-                          type="text"
-                          name="time"
-                          value={newOpportunity.time}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                          placeholder="e.g., 9:00 AM - 12:00 PM"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Max Volunteers *
-                        </label>
-                        <input
-                          type="number"
-                          name="maxVolunteers"
-                          value={newOpportunity.maxVolunteers}
-                          onChange={handleInputChange}
-                          required
-                          min="1"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Volunteer Hours *
-                        </label>
-                        <input
-                          type="number"
-                          name="volunteerHours"
-                          value={newOpportunity.volunteerHours}
-                          onChange={handleInputChange}
-                          required
-                          min="0.5"
-                          step="0.5"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                          placeholder="e.g., 3"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Description *
-                      </label>
-                      <textarea
-                        name="description"
-                        value={newOpportunity.description}
-                        onChange={handleInputChange}
-                        required
-                        rows={4}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="Describe the volunteer opportunity..."
-                      />
-                    </div>
-
-                    <div className="flex gap-4 pt-4">
-                      <button
-                        type="submit"
-                        className="flex-1 bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200"
-                      >
-                        Post Opportunity
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowPostForm(false)}
-                        className="flex-1 bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-400 transition-all duration-200"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Signup Modal */}
-          {showSignupModal && selectedOpportunity && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-xl max-w-lg w-full">
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900">Sign Up to Volunteer</h3>
-                    <button
-                      onClick={() => setShowSignupModal(false)}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-semibold text-gray-900">{selectedOpportunity.title}</h4>
-                    <p className="text-emerald-600">{selectedOpportunity.organization}</p>
-                    <p className="text-gray-600">{selectedOpportunity.date} • {selectedOpportunity.time}</p>
-                    <p className="text-gray-600">{selectedOpportunity.location}</p>
-                    <p className="text-gray-600 mt-2">
-                      <span className="font-medium">Volunteer Hours:</span> {selectedOpportunity.volunteerHours} hours
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleSignupSubmit} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={signupForm.name}
-                        onChange={handleSignupInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="Your full name"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={signupForm.email}
-                        onChange={handleSignupInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={signupForm.phone}
-                        onChange={handleSignupInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="(555) 123-4567"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Message (Optional)
-                      </label>
-                      <textarea
-                        name="message"
-                        value={signupForm.message}
-                        onChange={handleSignupInputChange}
-                        rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        placeholder="Tell us why you're interested or any relevant experience..."
-                      />
-                    </div>
-
-                    <div className="flex gap-4 pt-4">
-                      <button
-                        type="submit"
-                        className="flex-1 bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition-all duration-200"
-                      >
-                        Complete Sign Up
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowSignupModal(false)}
-                        className="flex-1 bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-400 transition-all duration-200"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Search and Filter Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
@@ -668,9 +420,22 @@ export default function OpportunitiesPage() {
           {/* Opportunities Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredOpportunities.map(opportunity => (
-              <div key={opportunity.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+              <div key={opportunity.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow relative">
+                {/* Delete Button - Only show for organizations who can delete */}
+                {canDeleteOpportunity(opportunity) && (
+                  <button
+                    onClick={() => handleDeleteOpportunity(opportunity.id)}
+                    className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+                    title="Delete opportunity"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
+
                 {/* Category Badge and Hours */}
-                <div className="mb-4 flex justify-between items-center">
+                <div className="mb-4 flex justify-between items-center pr-8">
                   <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(opportunity.category)}`}>
                     {opportunity.category}
                   </span>
@@ -762,8 +527,115 @@ export default function OpportunitiesPage() {
               </p>
             </div>
           )}
-          
         </div>
+
+        {/* Signup Modal */}
+        {showSignupModal && selectedOpportunity && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl max-w-lg w-full">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900">Sign Up to Volunteer</h3>
+                  <button
+                    onClick={() => setShowSignupModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-semibold text-gray-900">{selectedOpportunity.title}</h4>
+                  <p className="text-emerald-600">{selectedOpportunity.organization}</p>
+                  <p className="text-gray-600">{selectedOpportunity.date} • {selectedOpportunity.time}</p>
+                  <p className="text-gray-600">{selectedOpportunity.location}</p>
+                  <p className="text-gray-600 mt-2">
+                    <span className="font-medium">Volunteer Hours:</span> {selectedOpportunity.volunteerHours} hours
+                  </p>
+                </div>
+
+                <form onSubmit={handleSignupSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={signupForm.name}
+                      onChange={handleSignupInputChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={signupForm.email}
+                      onChange={handleSignupInputChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={signupForm.phone}
+                      onChange={handleSignupInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                      Additional Message (Optional)
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={signupForm.message}
+                      onChange={handleSignupInputChange}
+                      rows="3"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Tell us why you're interested in this opportunity..."
+                    ></textarea>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupModal(false)}
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      Sign Up
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );

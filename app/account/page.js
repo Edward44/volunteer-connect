@@ -285,7 +285,7 @@ export default function MyAccountPage() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900">Your Posted Opportunities</h3>
                 <button
-                  onClick={() => router.push('/opportunities')}
+                  onClick={() => router.push('/submit')}
                   className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
                 >
                   Post New Opportunity
@@ -353,7 +353,7 @@ export default function MyAccountPage() {
                   <h3 className="text-xl font-medium text-gray-900 mb-2">No opportunities posted yet</h3>
                   <p className="text-gray-600 mb-4">Start making a difference by posting your first volunteer opportunity</p>
                   <button
-                    onClick={() => router.push('/opportunities')}
+                    onClick={() => router.push('/submit')}
                     className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
                   >
                     Post Your First Opportunity
