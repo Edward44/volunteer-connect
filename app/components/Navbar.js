@@ -19,6 +19,12 @@ export default function Navbar() {
     window.location.href = '/';
   };
 
+  // Helper function to get the appropriate account URL
+  const getAccountUrl = () => {
+    if (!currentUser) return '/account';
+    return currentUser.userType === 'organization' ? '/account/organization' : '/account/volunteer';
+  };
+
   return (
     <nav className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -41,7 +47,7 @@ export default function Navbar() {
             Post Listing
           </Link>
           {currentUser && (
-            <Link href="/account" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            <Link href={getAccountUrl()} className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
               My Account
             </Link>
           )}
@@ -80,7 +86,7 @@ export default function Navbar() {
               {showDropdown && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   <Link 
-                    href="/account" 
+                    href={getAccountUrl()} 
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                     onClick={() => setShowDropdown(false)}
                   >
@@ -162,7 +168,7 @@ export default function Navbar() {
         </Link>
         {currentUser && (
           <>
-            <Link href="/account" className="text-gray-700 hover:text-emerald-600 font-medium py-2">
+            <Link href={getAccountUrl()} className="text-gray-700 hover:text-emerald-600 font-medium py-2">
               My Account
             </Link>
             <Link 

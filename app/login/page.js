@@ -76,9 +76,9 @@ export default function LoginPage() {
         
         // Alternative: Navigate to specific dashboards when those pages are created
         if (user.userType === 'volunteer' || formData.userType === 'volunteer') {
-          router.push('/dashboard/volunteer');
+          router.push('/account/volunteer');
          } else {
-           router.push('/dashboard/organization');
+           router.push('/account/organization');
          }
         
       } else {
