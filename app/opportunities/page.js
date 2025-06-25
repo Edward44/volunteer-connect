@@ -10,14 +10,6 @@ export default function OpportunitiesPage() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [opportunities, setOpportunities] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  const [showSignupModal, setShowSignupModal] = useState(false);
-  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
-  const [signupForm, setSignupForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: ''
-  });
 
   // Sample opportunities data (initial data) - Updated with volunteer hours
   const sampleOpportunities = [
@@ -93,14 +85,6 @@ export default function OpportunitiesPage() {
     localStorage.setItem('opportunities', JSON.stringify(customOpportunities));
   };
 
-  // Handle signup form input changes
-  const handleSignupInputChange = (e) => {
-    setSignupForm({
-      ...signupForm,
-      [e.target.name]: e.target.value
-    });
-  };
-
   // Handle Post Opportunity button click - Navigate to submit page
   const handlePostOpportunityClick = () => {
     if (!currentUser) {
@@ -154,98 +138,39 @@ export default function OpportunitiesPage() {
     return opportunity.postedBy === currentUser.id;
   };
 
-  // Handle sign up button click
+  // Handle sign up button click - Navigate to signup page
   const handleSignUpClick = (opportunity) => {
+    // Check if user is logged in
     if (!currentUser) {
-      // Redirect to login if not logged in
+      alert('Please sign in to volunteer for opportunities.');
       router.push('/login');
       return;
     }
 
+    // Check if user is a volunteer
+    if (currentUser.userType !== 'volunteer') {
+      alert('Only volunteers can sign up for opportunities. Please sign in with a volunteer account.');
+      return;
+    }
+
+    // Check if opportunity is full
     if (opportunity.volunteers >= opportunity.maxVolunteers) {
       alert('Sorry, this opportunity is full!');
       return;
     }
 
     // Check if user already applied
-    if (currentUser.userType === 'volunteer') {
-      const volunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
-      const currentVolunteer = volunteers.find(vol => vol.id === currentUser.id);
-      
-      if (currentVolunteer && currentVolunteer.appliedOpportunities && 
-          currentVolunteer.appliedOpportunities.includes(opportunity.id)) {
-        alert('You have already applied to this opportunity!');
-        return;
-      }
+    if (currentUser.appliedOpportunities && 
+        currentUser.appliedOpportunities.includes(opportunity.id)) {
+      alert('You have already applied to this opportunity!');
+      return;
     }
 
-    setSelectedOpportunity(opportunity);
+    // Store the selected opportunity in localStorage for the signup page
+    localStorage.setItem('selectedOpportunity', JSON.stringify(opportunity));
     
-    // Pre-fill form with user data if available
-    if (currentUser.userType === 'volunteer') {
-      setSignupForm({
-        name: currentUser.name || '',
-        email: currentUser.email || '',
-        phone: currentUser.phone || '',
-        message: ''
-      });
-    } else {
-      setSignupForm({
-        name: '',
-        email: '',
-        phone: '',
-        message: ''
-      });
-    }
-    
-    setShowSignupModal(true);
-  };
-
-  // Handle signup form submission
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
-    
-    // Update opportunity volunteer count
-    const updatedOpportunities = opportunities.map(opp => {
-      if (opp.id === selectedOpportunity.id) {
-        return { ...opp, volunteers: opp.volunteers + 1 };
-      }
-      return opp;
-    });
-    setOpportunities(updatedOpportunities);
-    saveOpportunities(updatedOpportunities);
-    
-    // If user is logged in as volunteer, update their applied opportunities
-    if (currentUser && currentUser.userType === 'volunteer') {
-      const volunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
-      const updatedVolunteers = volunteers.map(vol => {
-        if (vol.id === currentUser.id) {
-          const appliedOpportunities = vol.appliedOpportunities || [];
-          return {
-            ...vol,
-            appliedOpportunities: [...appliedOpportunities, selectedOpportunity.id]
-          };
-        }
-        return vol;
-      });
-      localStorage.setItem('volunteers', JSON.stringify(updatedVolunteers));
-      
-      // Update current user in localStorage
-      const updatedUser = {
-        ...currentUser,
-        appliedOpportunities: [...(currentUser.appliedOpportunities || []), selectedOpportunity.id]
-      };
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      setCurrentUser(updatedUser);
-    }
-    
-    // Close modal and reset form
-    setShowSignupModal(false);
-    setSignupForm({ name: '', email: '', phone: '', message: '' });
-    setSelectedOpportunity(null);
-    
-    // Show success message
-    alert('Successfully signed up! You will be contacted with more details.');
+    // Navigate to signup page
+    router.push('/volunteer-signup');
   };
 
   const filteredOpportunities = opportunities.filter(opp => {
@@ -270,6 +195,11 @@ export default function OpportunitiesPage() {
   const hasUserApplied = (opportunityId) => {
     if (!currentUser || currentUser.userType !== 'volunteer') return false;
     return currentUser.appliedOpportunities && currentUser.appliedOpportunities.includes(opportunityId);
+  };
+
+  // Check if user can sign up (must be logged in as volunteer)
+  const canSignUp = () => {
+    return currentUser && currentUser.userType === 'volunteer';
   };
 
   return (
@@ -431,14 +361,18 @@ export default function OpportunitiesPage() {
                 {/* Action Button */}
                 <button
                   onClick={() => handleSignUpClick(opportunity)}
-                  disabled={opportunity.volunteers >= opportunity.maxVolunteers || hasUserApplied(opportunity.id)}
+                  disabled={opportunity.volunteers >= opportunity.maxVolunteers || hasUserApplied(opportunity.id) || !canSignUp()}
                   className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
-                    opportunity.volunteers >= opportunity.maxVolunteers || hasUserApplied(opportunity.id)
+                    opportunity.volunteers >= opportunity.maxVolunteers || hasUserApplied(opportunity.id) || !canSignUp()
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       : 'bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md'
                   }`}
                 >
-                  {hasUserApplied(opportunity.id) 
+                  {!currentUser 
+                    ? 'Sign In to Volunteer'
+                    : currentUser.userType !== 'volunteer'
+                    ? 'Volunteers Only'
+                    : hasUserApplied(opportunity.id) 
                     ? 'Already Applied' 
                     : opportunity.volunteers >= opportunity.maxVolunteers 
                       ? 'Opportunity Full' 
@@ -464,114 +398,6 @@ export default function OpportunitiesPage() {
             </div>
           )}
         </div>
-
-        {/* Signup Modal */}
-        {showSignupModal && selectedOpportunity && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-lg w-full">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900">Sign Up to Volunteer</h3>
-                  <button
-                    onClick={() => setShowSignupModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-semibold text-gray-900">{selectedOpportunity.title}</h4>
-                  <p className="text-emerald-600">{selectedOpportunity.organization}</p>
-                  <p className="text-gray-600">{selectedOpportunity.date} • {selectedOpportunity.time}</p>
-                  <p className="text-gray-600">{selectedOpportunity.location}</p>
-                  <p className="text-gray-600 mt-2">
-                    <span className="font-medium">Volunteer Hours:</span> {selectedOpportunity.volunteerHours} hours
-                  </p>
-                </div>
-
-                <form onSubmit={handleSignupSubmit} className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={signupForm.name}
-                      onChange={handleSignupInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={signupForm.email}
-                      onChange={handleSignupInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={signupForm.phone}
-                      onChange={handleSignupInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Additional Message (Optional)
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={signupForm.message}
-                      onChange={handleSignupInputChange}
-                      rows="3"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                      placeholder="Tell us why you're interested in this opportunity..."
-                    ></textarea>
-                  </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowSignupModal(false)}
-                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-                    >
-                      Sign Up
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
       </main>
     </>
   );

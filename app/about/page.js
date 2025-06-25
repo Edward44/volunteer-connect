@@ -1,9 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Navbar from '../components/Navbar'; // Adjust path as needed
 
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
       {/* Hero Section */}
       <div className="bg-white">
         <div className="max-w-6xl mx-auto px-6 py-16">
