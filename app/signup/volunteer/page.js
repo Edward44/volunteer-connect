@@ -83,7 +83,7 @@ export default function VolunteerSignupPage() {
       
       // Success! Redirect to dashboard
       alert('Account created successfully! Welcome to Bono!');
-      router.push('/dashboard/volunteer');
+      router.push('/account/volunteer');
       
     } catch (error) {
       console.error('Signup error:', error);

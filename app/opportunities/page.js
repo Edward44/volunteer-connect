@@ -89,16 +89,11 @@ export default function OpportunitiesPage() {
   const handlePostOpportunityClick = () => {
     if (!currentUser) {
       // Show alert and redirect to login if not signed in
-      alert('Please sign in to post a volunteer opportunity.');
-      router.push('/login');
+      router.push('/submit');
       return;
     }
     
-    // Only organizations should be able to post opportunities
-    if (currentUser.userType !== 'organization') {
-      alert('Only organizations can post volunteer opportunities. Please sign in with an organization account.');
-      return;
-    }
+    
     
     // Navigate to submit page
     router.push('/submit');

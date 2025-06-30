@@ -11,6 +11,62 @@ export default function OrganizationDashboard() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Sample opportunities data (same as volunteer dashboard)
+  const sampleOpportunities = [
+    {
+      id: 1,
+      title: "Beach Cleanup Volunteer",
+      organization: "Ocean Conservation Society",
+      location: "Santa Monica Beach, CA",
+      date: "June 15, 2025",
+      time: "9:00 AM - 12:00 PM",
+      category: "Environment",
+      description: "Join us for a morning of beach cleanup to protect marine life and keep our coastlines beautiful.",
+      volunteers: 12,
+      maxVolunteers: 20,
+      volunteerHours: 3
+    },
+    {
+      id: 2,
+      title: "Food Bank Assistant",
+      organization: "Community Food Network",
+      location: "Downtown Food Bank",
+      date: "June 18, 2025",
+      time: "2:00 PM - 6:00 PM",
+      category: "Community",
+      description: "Help sort and distribute food to families in need. No experience required - training provided.",
+      volunteers: 8,
+      maxVolunteers: 15,
+      volunteerHours: 4
+    },
+    {
+      id: 3,
+      title: "Reading Tutor for Kids",
+      organization: "Literacy First",
+      location: "Lincoln Elementary School",
+      date: "June 20, 2025",
+      time: "3:30 PM - 5:30 PM",
+      category: "Education",
+      description: "Support elementary students with reading skills through one-on-one tutoring sessions.",
+      volunteers: 5,
+      maxVolunteers: 10,
+      volunteerHours: 2
+    },
+    {
+      id: 4,
+      title: "Senior Center Activities",
+      organization: "Golden Years Community Center",
+      location: "Riverside Senior Center",
+      date: "June 22, 2025",
+      time: "1:00 PM - 4:00 PM",
+      category: "Healthcare",
+      description: "Lead recreational activities and provide companionship for seniors in our community.",
+      volunteers: 3,
+      maxVolunteers: 8,
+      volunteerHours: 3
+    }
+  ];
+
   useEffect(() => {
     // Check if user is logged in and is an organization
     const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -27,16 +83,65 @@ export default function OrganizationDashboard() {
 
   const loadDashboardData = (user) => {
     try {
-      // Load organization's opportunities
-      const allOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
-      const orgOpportunities = allOpportunities.filter(opp => opp.organizationId === user.id);
+      // Load all opportunities (sample + custom)
+      const savedOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
+      const allOpportunities = [...sampleOpportunities, ...savedOpportunities];
+      
+      // Filter opportunities for this organization - check multiple fields
+      const orgOpportunities = allOpportunities.filter(opp => {
+        // Check if opportunity was created by this organization
+        if (opp.organizationId === user.id) return true;
+        
+        // Check if organization name matches (for backward compatibility)
+        if (opp.organization === user.name) return true;
+        
+        // Check if organizationName matches (in case the form uses this field)
+        if (opp.organizationName === user.name) return true;
+        
+        // Check if createdBy matches the user ID
+        if (opp.createdBy === user.id) return true;
+        
+        return false;
+      });
+      
+      console.log('Current user:', user);
+      console.log('All opportunities:', allOpportunities);
+      console.log('Filtered org opportunities:', orgOpportunities);
+      
       setMyOpportunities(orgOpportunities);
 
-      // Load applications for organization's opportunities
-      const allApplications = JSON.parse(localStorage.getItem('applications') || '[]');
-      const orgApplications = allApplications.filter(app => 
-        orgOpportunities.some(opp => opp.id === app.opportunityId)
-      );
+      // Get all users to find applications
+      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const volunteers = allUsers.filter(u => u.userType === 'volunteer');
+      
+      // Create application objects from volunteer applied opportunities
+      const orgApplications = [];
+      const opportunityIds = orgOpportunities.map(opp => opp.id);
+      
+      volunteers.forEach(volunteer => {
+        if (volunteer.appliedOpportunities && volunteer.appliedOpportunities.length > 0) {
+          volunteer.appliedOpportunities.forEach(opportunityId => {
+            if (opportunityIds.includes(opportunityId)) {
+              const opportunity = orgOpportunities.find(opp => opp.id === opportunityId);
+              if (opportunity) {
+                orgApplications.push({
+                  id: `${volunteer.id}-${opportunityId}`, // Unique ID
+                  volunteerId: volunteer.id,
+                  opportunityId: opportunityId,
+                  volunteerName: volunteer.name,
+                  volunteerEmail: volunteer.email,
+                  opportunityTitle: opportunity.title,
+                  organization: opportunity.organization,
+                  status: 'pending', // Default status
+                  appliedAt: new Date().toISOString(), // You might want to track this better
+                  message: `Application for ${opportunity.title}` // Default message
+                });
+              }
+            }
+          });
+        }
+      });
+
       setApplications(orgApplications);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -44,6 +149,37 @@ export default function OrganizationDashboard() {
       setLoading(false);
     }
   };
+
+  // Add a refresh function that can be called when returning from opportunity creation
+  const refreshDashboard = () => {
+    if (currentUser) {
+      loadDashboardData(currentUser);
+    }
+  };
+
+  // Listen for storage changes to refresh dashboard when opportunities are added
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'opportunities') {
+        refreshDashboard();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [currentUser]);
+
+  // Also refresh when the component becomes visible again (for same-tab navigation)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && currentUser) {
+        refreshDashboard();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [currentUser]);
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
@@ -53,13 +189,16 @@ export default function OrganizationDashboard() {
 
   const handleApplicationStatus = (applicationId, newStatus) => {
     try {
-      const allApplications = JSON.parse(localStorage.getItem('applications') || '[]');
-      const updatedApplications = allApplications.map(app => 
+      // Update applications in state
+      const updatedApplications = applications.map(app => 
         app.id === applicationId ? { ...app, status: newStatus } : app
       );
+      setApplications(updatedApplications);
       
-      localStorage.setItem('applications', JSON.stringify(updatedApplications));
-      loadDashboardData(currentUser);
+      // Store application status in a separate storage for persistence
+      const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
+      applicationStatuses[applicationId] = newStatus;
+      localStorage.setItem('applicationStatuses', JSON.stringify(applicationStatuses));
       
       alert(`Application ${newStatus} successfully!`);
     } catch (error) {
@@ -76,10 +215,27 @@ export default function OrganizationDashboard() {
       const updatedOpportunities = opportunities.filter(opp => opp.id !== opportunityId);
       localStorage.setItem('opportunities', JSON.stringify(updatedOpportunities));
       
-      // Also remove related applications
-      const allApplications = JSON.parse(localStorage.getItem('applications') || '[]');
-      const updatedApplications = allApplications.filter(app => app.opportunityId !== opportunityId);
-      localStorage.setItem('applications', JSON.stringify(updatedApplications));
+      // Remove applications for this opportunity from all users
+      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const updatedUsers = allUsers.map(user => {
+        if (user.userType === 'volunteer' && user.appliedOpportunities) {
+          return {
+            ...user,
+            appliedOpportunities: user.appliedOpportunities.filter(id => id !== opportunityId)
+          };
+        }
+        return user;
+      });
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      
+      // Remove application statuses for this opportunity
+      const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
+      Object.keys(applicationStatuses).forEach(key => {
+        if (key.includes(`-${opportunityId}`)) {
+          delete applicationStatuses[key];
+        }
+      });
+      localStorage.setItem('applicationStatuses', JSON.stringify(applicationStatuses));
       
       loadDashboardData(currentUser);
       alert('Opportunity deleted successfully!');
@@ -88,6 +244,18 @@ export default function OrganizationDashboard() {
       alert('Error deleting opportunity. Please try again.');
     }
   };
+
+  // Load application statuses when applications change
+  useEffect(() => {
+    if (applications.length > 0) {
+      const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
+      const updatedApplications = applications.map(app => ({
+        ...app,
+        status: applicationStatuses[app.id] || 'pending'
+      }));
+      setApplications(updatedApplications);
+    }
+  }, [applications.length]);
 
   if (loading) {
     return (
@@ -123,6 +291,12 @@ export default function OrganizationDashboard() {
                   className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
                 >
                   Create Opportunity
+                </button>
+                <button
+                  onClick={refreshDashboard}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Refresh
                 </button>
                 <button
                   onClick={handleLogout}
@@ -205,7 +379,15 @@ export default function OrganizationDashboard() {
         {/* My Opportunities Section */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">My Opportunities</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">My Opportunities</h2>
+              <button
+                onClick={refreshDashboard}
+                className="text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+              >
+                🔄 Refresh List
+              </button>
+            </div>
             
             {myOpportunities.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-8 text-center">
@@ -278,7 +460,7 @@ export default function OrganizationDashboard() {
                             {applications.filter(app => app.opportunityId === opportunity.id).length} applications
                           </span>
                           <span className="text-sm text-gray-500">
-                            Created {new Date(opportunity.createdAt).toLocaleDateString()}
+                            Created {opportunity.createdAt ? new Date(opportunity.createdAt).toLocaleDateString() : 'Recently'}
                           </span>
                         </div>
                       </div>

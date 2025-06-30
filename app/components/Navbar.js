@@ -21,7 +21,7 @@ export default function Navbar() {
 
   // Helper function to get the appropriate account URL
   const getAccountUrl = () => {
-    if (!currentUser) return '/account';
+    if (!currentUser) return '/login';
     return currentUser.userType === 'organization' ? '/account/organization' : '/account/volunteer';
   };
 
@@ -49,12 +49,9 @@ export default function Navbar() {
           <Link href="/about" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
             About Us
           </Link>
-          {/* Hidden My Account link for navigation purposes */}
-          {currentUser && (
-            <Link href={getAccountUrl()} className="sr-only">
-              My Account
-            </Link>
-          )}
+          <Link href={getAccountUrl()} className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            My Account
+          </Link>
         </div>
         
         {/* Login/Account Button */}
@@ -143,6 +140,9 @@ export default function Navbar() {
         <Link href="/about" className="text-gray-700 hover:text-emerald-600 font-medium py-2">
           About Us
         </Link>
+        <Link href={getAccountUrl()} className="text-gray-700 hover:text-emerald-600 font-medium py-2">
+          My Account
+        </Link>
         {currentUser && (
           <>
             <Link 
@@ -150,10 +150,6 @@ export default function Navbar() {
               className="text-gray-700 hover:text-emerald-600 font-medium py-2"
             >
               Dashboard
-            </Link>
-            {/* Hidden My Account link for mobile navigation purposes */}
-            <Link href={getAccountUrl()} className="sr-only">
-              My Account
             </Link>
             <button 
               onClick={handleLogout}

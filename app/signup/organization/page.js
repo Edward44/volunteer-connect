@@ -79,12 +79,22 @@ export default function OrganizationSignupPage() {
       // Save to storage
       localStorage.setItem('organizations', JSON.stringify(updatedOrgs));
       
-      // Set current user session
+      // Set current user session and authentication state
       localStorage.setItem('currentUser', JSON.stringify(newOrganization));
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userType', 'organization');
       
-      // Success! Redirect to dashboard
+      // Force a page reload to ensure authentication state is recognized
+      // or use window.location.href for a hard redirect
       alert('Organization account created successfully! Welcome to Bono!');
-      router.push('/dashboard/organization');
+      
+      // Option 1: Hard redirect (bypasses Next.js router)
+      window.location.href = '/account/organization';
+      
+      // Option 2: If you want to use Next.js router, add a longer delay
+      // setTimeout(() => {
+      //   router.push('/account/organization');
+      // }, 500);
       
     } catch (error) {
       console.error('Signup error:', error);

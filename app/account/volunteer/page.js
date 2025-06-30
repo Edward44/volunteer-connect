@@ -11,6 +11,62 @@ export default function VolunteerDashboard() {
   const [myApplications, setMyApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Sample opportunities data (same as opportunities page)
+  const sampleOpportunities = [
+    {
+      id: 1,
+      title: "Beach Cleanup Volunteer",
+      organization: "Ocean Conservation Society",
+      location: "Santa Monica Beach, CA",
+      date: "June 15, 2025",
+      time: "9:00 AM - 12:00 PM",
+      category: "Environment",
+      description: "Join us for a morning of beach cleanup to protect marine life and keep our coastlines beautiful.",
+      volunteers: 12,
+      maxVolunteers: 20,
+      volunteerHours: 3
+    },
+    {
+      id: 2,
+      title: "Food Bank Assistant",
+      organization: "Community Food Network",
+      location: "Downtown Food Bank",
+      date: "June 18, 2025",
+      time: "2:00 PM - 6:00 PM",
+      category: "Community",
+      description: "Help sort and distribute food to families in need. No experience required - training provided.",
+      volunteers: 8,
+      maxVolunteers: 15,
+      volunteerHours: 4
+    },
+    {
+      id: 3,
+      title: "Reading Tutor for Kids",
+      organization: "Literacy First",
+      location: "Lincoln Elementary School",
+      date: "June 20, 2025",
+      time: "3:30 PM - 5:30 PM",
+      category: "Education",
+      description: "Support elementary students with reading skills through one-on-one tutoring sessions.",
+      volunteers: 5,
+      maxVolunteers: 10,
+      volunteerHours: 2
+    },
+    {
+      id: 4,
+      title: "Senior Center Activities",
+      organization: "Golden Years Community Center",
+      location: "Riverside Senior Center",
+      date: "June 22, 2025",
+      time: "1:00 PM - 4:00 PM",
+      category: "Healthcare",
+      description: "Lead recreational activities and provide companionship for seniors in our community.",
+      volunteers: 3,
+      maxVolunteers: 8,
+      volunteerHours: 3
+    }
+  ];
+
   useEffect(() => {
     // Check if user is logged in and is a volunteer
     const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -22,18 +78,35 @@ export default function VolunteerDashboard() {
     }
 
     setCurrentUser(user);
-    loadDashboardData();
+    loadDashboardData(user);
   }, [router]);
 
-  const loadDashboardData = () => {
+  const loadDashboardData = (user) => {
     try {
-      // Load available opportunities
-      const allOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
+      // Load all opportunities (sample + custom)
+      const savedOpportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
+      const allOpportunities = [...sampleOpportunities, ...savedOpportunities];
       setOpportunities(allOpportunities.slice(0, 6)); // Show first 6 opportunities
 
-      // Load user's applications
-      const applications = JSON.parse(localStorage.getItem('applications') || '[]');
-      const userApplications = applications.filter(app => app.volunteerId === currentUser?.id);
+      // Get user's applied opportunities from their profile
+      const appliedOpportunityIds = user.appliedOpportunities || [];
+      
+      // Create application objects for each applied opportunity
+      const userApplications = appliedOpportunityIds.map(opportunityId => {
+        const opportunity = allOpportunities.find(opp => opp.id === opportunityId);
+        return {
+          id: opportunityId,
+          volunteerId: user.id,
+          opportunityId: opportunityId,
+          status: 'pending', // Default status
+          appliedAt: new Date().toISOString(), // You might want to track this better
+          volunteerName: user.name,
+          volunteerEmail: user.email,
+          opportunityTitle: opportunity?.title || 'Unknown Opportunity',
+          organization: opportunity?.organization || 'Unknown Organization'
+        };
+      });
+
       setMyApplications(userApplications);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -52,22 +125,31 @@ export default function VolunteerDashboard() {
     if (!currentUser) return;
 
     try {
-      const applications = JSON.parse(localStorage.getItem('applications') || '[]');
-      const newApplication = {
-        id: Date.now(),
-        volunteerId: currentUser.id,
-        opportunityId: opportunityId,
-        status: 'pending',
-        appliedAt: new Date().toISOString(),
-        volunteerName: currentUser.name,
-        volunteerEmail: currentUser.email
+      // Check if already applied
+      if (currentUser.appliedOpportunities && currentUser.appliedOpportunities.includes(opportunityId)) {
+        alert('You have already applied to this opportunity!');
+        return;
+      }
+
+      // Update user's applied opportunities
+      const updatedUser = {
+        ...currentUser,
+        appliedOpportunities: [...(currentUser.appliedOpportunities || []), opportunityId]
       };
 
-      applications.push(newApplication);
-      localStorage.setItem('applications', JSON.stringify(applications));
-      
-      // Refresh applications
-      loadDashboardData();
+      // Save updated user to localStorage
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+
+      // Update all users in localStorage
+      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const updatedUsers = allUsers.map(user => 
+        user.id === currentUser.id ? updatedUser : user
+      );
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+      // Refresh dashboard data
+      loadDashboardData(updatedUser);
       
       alert('Application submitted successfully!');
     } catch (error) {
@@ -77,7 +159,7 @@ export default function VolunteerDashboard() {
   };
 
   const isAlreadyApplied = (opportunityId) => {
-    return myApplications.some(app => app.opportunityId === opportunityId);
+    return currentUser?.appliedOpportunities?.includes(opportunityId) || false;
   };
 
   if (loading) {
@@ -269,37 +351,34 @@ export default function VolunteerDashboard() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {myApplications.map((application) => {
-                        const opportunity = opportunities.find(opp => opp.id === application.opportunityId);
-                        return (
-                          <tr key={application.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {opportunity?.title || 'Unknown Opportunity'}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {opportunity?.organization || 'Unknown Organization'}
-                                </div>
+                      {myApplications.map((application) => (
+                        <tr key={application.id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {application.opportunityTitle}
                               </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {new Date(application.appliedAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                application.status === 'accepted' 
-                                  ? 'bg-green-100 text-green-800'
-                                  : application.status === 'rejected'
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                              <div className="text-sm text-gray-500">
+                                {application.organization}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(application.appliedAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              application.status === 'accepted' 
+                                ? 'bg-green-100 text-green-800'
+                                : application.status === 'rejected'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -311,6 +390,3 @@ export default function VolunteerDashboard() {
     </>
   );
 }
-
-//volunteer dashboard needs some work, will re-code this later
-//example, it doesn't count applications submitted and doesn't track opportunities in your account on your dashboard

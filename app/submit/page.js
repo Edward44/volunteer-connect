@@ -37,11 +37,11 @@ export default function PostOpportunityPage() {
     setCurrentUser(user);
     setIsLoading(false);
     
-    // Pre-fill organization and contact email if user is logged in
-    if (user) {
+    // Pre-fill organization and contact email if user is logged in and is an organization
+    if (user && user.userType === 'organization') {
       setFormData(prev => ({
         ...prev,
-        organization: user.userType === 'organization' ? user.orgName : '',
+        organization: user.orgName || '',
         contactEmail: user.email || ''
       }));
     }
@@ -98,7 +98,7 @@ export default function PostOpportunityPage() {
         datePosted: new Date().toISOString(),
         status: 'active',
         postedBy: currentUser.id,
-        postedByName: currentUser.userType === 'organization' ? currentUser.orgName : currentUser.name
+        postedByName: currentUser.orgName || currentUser.name
       };
 
       // Get existing opportunities from localStorage
@@ -116,7 +116,7 @@ export default function PostOpportunityPage() {
       // Clear form
       setFormData({
         title: '',
-        organization: currentUser.userType === 'organization' ? currentUser.orgName : '',
+        organization: currentUser.orgName || '',
         location: '',
         date: '',
         time: '',
@@ -159,71 +159,87 @@ export default function PostOpportunityPage() {
     );
   }
 
-  // Show login required message if user is not authenticated
-  if (!currentUser) {
+  // Show access denied if user is not logged in or not an organization
+  if (!currentUser || currentUser.userType !== 'organization') {
     return (
       <>
         <Navbar />
         <main className="min-h-screen bg-gray-50">
           <div className="max-w-4xl mx-auto px-6 py-16">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
               
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Login Required</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Organization Account Required</h1>
               <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                You need to be logged in to post volunteer opportunities. Please sign in to your account or create one to get started.
+                Only registered organizations can post volunteer opportunities. 
+                {!currentUser ? ' Please sign in to your organization account to continue.' : ' Your current account type does not have permission to post opportunities.'}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link 
-                  href="/login" 
-                  className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Sign In
-                </Link>
-                
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Link 
-                    href="/signup/organization" 
-                    className="inline-flex items-center justify-center px-6 py-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
-                  >
-                    <span className="mr-2">🏢</span>
-                    Sign Up as Organization
-                  </Link>
-                  <Link 
-                    href="/signup/volunteer" 
-                    className="inline-flex items-center justify-center px-6 py-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
-                  >
-                    <span className="mr-2">🤝</span>
-                    Sign Up as Volunteer
-                  </Link>
-                </div>
+                {!currentUser ? (
+                  <>
+                    <Link 
+                      href="/login" 
+                      className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Sign In as Organization
+                    </Link>
+                    
+                    <Link 
+                      href="/signup/organization" 
+                      className="inline-flex items-center justify-center px-6 py-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
+                    >
+                      <span className="mr-2">🏢</span>
+                      Register Organization
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link 
+                      href="/opportunities" 
+                      className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      Browse Opportunities
+                    </Link>
+                    
+                    <Link 
+                      href="/signup/organization" 
+                      className="inline-flex items-center justify-center px-6 py-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
+                    >
+                      <span className="mr-2">🏢</span>
+                      Register as Organization
+                    </Link>
+                  </>
+                )}
               </div>
               
               <div className="mt-8 pt-8 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Why do I need to login?</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Why organizations only?</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-2xl mb-2">🔒</div>
-                    <h4 className="font-medium text-gray-900 mb-2">Security</h4>
-                    <p className="text-sm text-gray-600">Protect your posted opportunities and manage them securely</p>
+                    <div className="text-2xl mb-2">🏢</div>
+                    <h4 className="font-medium text-gray-900 mb-2">Verification</h4>
+                    <p className="text-sm text-gray-600">Ensures all opportunities come from legitimate organizations</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-2xl mb-2">⚡</div>
-                    <h4 className="font-medium text-gray-900 mb-2">Easy Management</h4>
-                    <p className="text-sm text-gray-600">Edit, update, and track your volunteer opportunities</p>
+                    <div className="text-2xl mb-2">📋</div>
+                    <h4 className="font-medium text-gray-900 mb-2">Accountability</h4>
+                    <p className="text-sm text-gray-600">Organizations provide proper oversight and support</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-2xl mb-2">📊</div>
-                    <h4 className="font-medium text-gray-900 mb-2">Analytics</h4>
-                    <p className="text-sm text-gray-600">See how many volunteers are interested in your opportunities</p>
+                    <div className="text-2xl mb-2">✅</div>
+                    <h4 className="font-medium text-gray-900 mb-2">Quality</h4>
+                    <p className="text-sm text-gray-600">Maintains high standards for volunteer experiences</p>
                   </div>
                 </div>
               </div>
@@ -234,7 +250,7 @@ export default function PostOpportunityPage() {
     );
   }
 
-  // Show the form if user is authenticated
+  // Show the form if user is authenticated and is an organization
   return (
     <>
       <Navbar />
@@ -249,7 +265,7 @@ export default function PostOpportunityPage() {
               </p>
               <div className="mt-4 flex items-center justify-center text-sm text-gray-500">
                 <span className="mr-2">👋</span>
-                Welcome back, {currentUser.userType === 'organization' ? currentUser.orgName : currentUser.name}!
+                Welcome back, {currentUser.orgName || currentUser.name}!
               </div>
             </div>
           </div>
@@ -310,7 +326,9 @@ export default function PostOpportunityPage() {
                     {errors.organization && <p className="text-red-500 text-sm mt-1">{errors.organization}</p>}
                   </div>
                 </div>
-              </div><div>
+              </div>
+
+              <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -509,9 +527,6 @@ export default function PostOpportunityPage() {
                   placeholder="What will volunteers gain from this experience? (community service hours, skills, networking, etc.)"
                 />
               </div>
-
-              {/* Contact Information */}
-              
 
               {/* Submit Button */}
               <div className="flex gap-4 pt-6 border-t border-gray-200">
