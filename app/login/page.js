@@ -102,7 +102,7 @@ export default function LoginPage() {
             <div className="max-w-md mx-auto">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                  Welcome back to 
+                  Welcome to 
                   <span className="text-emerald-600"> Bono</span>
                 </h1>
                 <p className="text-xl text-gray-600">

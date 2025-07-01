@@ -211,52 +211,41 @@ export default function VolunteerDashboard() {
         {/* Dashboard Stats */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-emerald-100 rounded-lg">
-                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex justify-center">
+              <button
+                onClick={() => router.push('/applications')}
+                className="bg-white rounded-xl shadow-sm p-8 hover:shadow-md transition-shadow text-center w-full max-w-md"
+              >
+                <div className="flex flex-col items-center">
+                  <div className="p-4 bg-emerald-100 rounded-lg mb-4">
+                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Applications Submitted</p>
-                    <p className="text-2xl font-bold text-gray-900">{myApplications.length}</p>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Application Details</h3>
+                    <p className="text-gray-600 mb-4">View and manage your volunteer applications</p>
+                    <div className="flex items-center justify-center space-x-6 text-sm">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-emerald-600">{myApplications.length}</p>
+                        <p className="text-gray-500">Total</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-yellow-600">
+                          {myApplications.filter(app => app.status === 'pending').length}
+                        </p>
+                        <p className="text-gray-500">Pending</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-green-600">
+                          {myApplications.filter(app => app.status === 'accepted').length}
+                        </p>
+                        <p className="text-gray-500">Accepted</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Pending Applications</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {myApplications.filter(app => app.status === 'pending').length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Accepted Applications</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {myApplications.filter(app => app.status === 'accepted').length}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              </button>
             </div>
           </div>
         </section>
@@ -384,7 +373,7 @@ export default function VolunteerDashboard() {
                 </div>
               </div>
             </div>
-          </section>
+        </section>
         )}
       </main>
     </>
