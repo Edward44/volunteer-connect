@@ -301,7 +301,7 @@ export default function PostOpportunityPage() {
                       name="title"
                       value={formData.title}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 border text-gray-900 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.title ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="e.g., Community Garden Cleanup"
@@ -318,7 +318,7 @@ export default function PostOpportunityPage() {
                       name="organization"
                       value={formData.organization}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.organization ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Your organization name"
@@ -339,7 +339,7 @@ export default function PostOpportunityPage() {
                       name="contactEmail"
                       value={formData.contactEmail}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.contactEmail ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="contact@yourorganization.org"
@@ -356,7 +356,7 @@ export default function PostOpportunityPage() {
                       name="contactPhone"
                       value={formData.contactPhone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                      className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                       placeholder="(555) 123-4567"
                     />
                   </div>
@@ -376,7 +376,7 @@ export default function PostOpportunityPage() {
                       name="location"
                       value={formData.location}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.location ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Full address or location description"
@@ -393,7 +393,7 @@ export default function PostOpportunityPage() {
                       name="date"
                       value={formData.date}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.date ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -409,7 +409,7 @@ export default function PostOpportunityPage() {
                       name="time"
                       value={formData.time}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.time ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="e.g., 9:00 AM - 12:00 PM"
@@ -431,7 +431,7 @@ export default function PostOpportunityPage() {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.category ? 'border-red-500' : 'border-gray-300'
                       }`}
                     >
@@ -453,7 +453,7 @@ export default function PostOpportunityPage() {
                       value={formData.maxVolunteers}
                       onChange={handleChange}
                       min="1"
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.maxVolunteers ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -472,7 +472,7 @@ export default function PostOpportunityPage() {
                   value={formData.description}
                   onChange={handleChange}
                   rows={5}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                     errors.description ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Describe the volunteer opportunity, what volunteers will be doing, and any important details..."
@@ -490,7 +490,7 @@ export default function PostOpportunityPage() {
                   name="volunteerHours"
                   value={formData.volunteerHours}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                     errors.volunteerHours ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="e.g., 3 hours, Half day, Full day"
@@ -508,7 +508,7 @@ export default function PostOpportunityPage() {
                   value={formData.requirements}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                   placeholder="Any specific skills, experience, or requirements for volunteers..."
                 />
               </div>
@@ -523,7 +523,7 @@ export default function PostOpportunityPage() {
                   value={formData.benefits}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                   placeholder="What will volunteers gain from this experience? (community service hours, skills, networking, etc.)"
                 />
               </div>

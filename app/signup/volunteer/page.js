@@ -121,7 +121,7 @@ export default function VolunteerSignupPage() {
                   name="name" 
                   value={formData.name} 
                   onChange={handleChange} 
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                     errors.name ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter your full name"
@@ -138,7 +138,7 @@ export default function VolunteerSignupPage() {
                   name="email" 
                   value={formData.email} 
                   onChange={handleChange} 
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="your.email@example.com"
@@ -154,7 +154,7 @@ export default function VolunteerSignupPage() {
                   name="location" 
                   value={formData.location} 
                   onChange={handleChange} 
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                     errors.location ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="City, State"
@@ -171,7 +171,7 @@ export default function VolunteerSignupPage() {
                   name="phone" 
                   value={formData.phone} 
                   onChange={handleChange} 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -184,7 +184,7 @@ export default function VolunteerSignupPage() {
                   name="interests" 
                   value={formData.interests} 
                   onChange={handleChange} 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                   rows={3}
                   placeholder="What causes interest you? Any special skills you'd like to contribute?"
                 />

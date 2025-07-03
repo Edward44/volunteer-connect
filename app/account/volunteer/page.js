@@ -121,45 +121,47 @@ export default function VolunteerDashboard() {
     router.push('/');
   };
 
-  const applyToOpportunity = (opportunityId) => {
-    if (!currentUser) return;
-
-    try {
-      // Check if already applied
-      if (currentUser.appliedOpportunities && currentUser.appliedOpportunities.includes(opportunityId)) {
-        alert('You have already applied to this opportunity!');
-        return;
-      }
-
-      // Update user's applied opportunities
-      const updatedUser = {
-        ...currentUser,
-        appliedOpportunities: [...(currentUser.appliedOpportunities || []), opportunityId]
-      };
-
-      // Save updated user to localStorage
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      setCurrentUser(updatedUser);
-
-      // Update all users in localStorage
-      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const updatedUsers = allUsers.map(user => 
-        user.id === currentUser.id ? updatedUser : user
-      );
-      localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-      // Refresh dashboard data
-      loadDashboardData(updatedUser);
-      
-      alert('Application submitted successfully!');
-    } catch (error) {
-      console.error('Error applying to opportunity:', error);
-      alert('Error submitting application. Please try again.');
+  // Modified to follow the same workflow as opportunities page
+  const handleApplyNow = (opportunity) => {
+    // Check if user is logged in (should already be checked, but for consistency)
+    if (!currentUser) {
+      alert('Please sign in to volunteer for opportunities.');
+      router.push('/login');
+      return;
     }
+
+    // Check if user is a volunteer (should already be checked, but for consistency)
+    if (currentUser.userType !== 'volunteer') {
+      alert('Only volunteers can sign up for opportunities. Please sign in with a volunteer account.');
+      return;
+    }
+
+    // Check if opportunity is full
+    if (opportunity.volunteers >= opportunity.maxVolunteers) {
+      alert('Sorry, this opportunity is full!');
+      return;
+    }
+
+    // Check if user already applied
+    if (currentUser.appliedOpportunities && 
+        currentUser.appliedOpportunities.includes(opportunity.id)) {
+      alert('You have already applied to this opportunity!');
+      return;
+    }
+
+    // Store the selected opportunity in localStorage for the signup page
+    localStorage.setItem('selectedOpportunity', JSON.stringify(opportunity));
+    
+    // Navigate to volunteer signup page (same as opportunities page)
+    router.push('/volunteer-signup');
   };
 
   const isAlreadyApplied = (opportunityId) => {
     return currentUser?.appliedOpportunities?.includes(opportunityId) || false;
+  };
+
+  const isOpportunityFull = (opportunity) => {
+    return opportunity.volunteers >= opportunity.maxVolunteers;
   };
 
   if (loading) {
@@ -212,40 +214,52 @@ export default function VolunteerDashboard() {
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex justify-center">
-              <button
-                onClick={() => router.push('/applications')}
-                className="bg-white rounded-xl shadow-sm p-8 hover:shadow-md transition-shadow text-center w-full max-w-md"
-              >
-                <div className="flex flex-col items-center">
-                  <div className="p-4 bg-emerald-100 rounded-lg mb-4">
-                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+              <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow w-full max-w-4xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-6">
+                    <div className="p-3 bg-emerald-100 rounded-lg">
+                      <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">Your Applications</h3>
+                      <p className="text-gray-600 text-sm">
+                        Track your volunteer applications and their status
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Application Details</h3>
-                    <p className="text-gray-600 mb-4">View and manage your volunteer applications</p>
-                    <div className="flex items-center justify-center space-x-6 text-sm">
+
+                  <div className="flex items-center space-x-8">
+                    <div className="flex items-center space-x-6">
                       <div className="text-center">
                         <p className="text-2xl font-bold text-emerald-600">{myApplications.length}</p>
-                        <p className="text-gray-500">Total</p>
+                        <p className="text-gray-500 text-sm">Total</p>
                       </div>
                       <div className="text-center">
                         <p className="text-2xl font-bold text-yellow-600">
                           {myApplications.filter(app => app.status === 'pending').length}
                         </p>
-                        <p className="text-gray-500">Pending</p>
+                        <p className="text-gray-500 text-sm">Pending</p>
                       </div>
                       <div className="text-center">
                         <p className="text-2xl font-bold text-green-600">
                           {myApplications.filter(app => app.status === 'accepted').length}
                         </p>
-                        <p className="text-gray-500">Accepted</p>
+                        <p className="text-gray-500 text-sm">Accepted</p>
                       </div>
                     </div>
+
+                    <button
+                      onClick={() => router.push('/applications')}
+                      className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+                    >
+                      View Details
+                    </button>
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           </div>
         </section>
@@ -298,18 +312,22 @@ export default function VolunteerDashboard() {
                       <span className="text-sm text-gray-500">
                         {opportunity.date}
                       </span>
-                      {isAlreadyApplied(opportunity.id) ? (
-                        <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium">
-                          Applied ✓
-                        </span>
-                      ) : (
-                        <button
-                          onClick={() => applyToOpportunity(opportunity.id)}
-                          className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
-                        >
-                          Apply Now
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleApplyNow(opportunity)}
+                        disabled={isOpportunityFull(opportunity) || isAlreadyApplied(opportunity.id)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          isOpportunityFull(opportunity) || isAlreadyApplied(opportunity.id)
+                            ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                            : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                        }`}
+                      >
+                        {isAlreadyApplied(opportunity.id) 
+                          ? 'Already Applied' 
+                          : isOpportunityFull(opportunity)
+                          ? 'Opportunity Full' 
+                          : 'Apply Now'
+                        }
+                      </button>
                     </div>
                   </div>
                 ))}

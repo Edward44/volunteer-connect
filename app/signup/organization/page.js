@@ -134,7 +134,7 @@ export default function OrganizationSignupPage() {
                     name="orgName"
                     value={formData.orgName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                       errors.orgName ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="Your organization name"
@@ -151,7 +151,7 @@ export default function OrganizationSignupPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="contact@yourorganization.org"
@@ -170,7 +170,7 @@ export default function OrganizationSignupPage() {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                    className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                       errors.location ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="City, State"
@@ -187,7 +187,7 @@ export default function OrganizationSignupPage() {
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                     placeholder="https://yourorganization.org"
                   />
                 </div>
@@ -201,7 +201,7 @@ export default function OrganizationSignupPage() {
                   name="industry"
                   value={formData.industry}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                     errors.industry ? 'border-red-500' : 'border-gray-300'
                   }`}
                   rows={3}
@@ -218,7 +218,7 @@ export default function OrganizationSignupPage() {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  className="w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                   rows={4}
                   placeholder="Tell volunteers more about your organization, its history, values, and impact..."
                 />

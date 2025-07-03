@@ -291,7 +291,7 @@ export default function VolunteerSignupPage() {
                     name="name"
                     value={signupForm.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900"
                     required
                     disabled={isSubmitting}
                   />
@@ -307,7 +307,7 @@ export default function VolunteerSignupPage() {
                     name="email"
                     value={signupForm.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900"
                     required
                     disabled={isSubmitting}
                   />
@@ -323,7 +323,7 @@ export default function VolunteerSignupPage() {
                     name="phone"
                     value={signupForm.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900"
                     disabled={isSubmitting}
                   />
                 </div>
@@ -338,7 +338,7 @@ export default function VolunteerSignupPage() {
                     name="location"
                     value={signupForm.location}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-400"
                     placeholder="City, State"
                     disabled={isSubmitting}
                   />
@@ -354,7 +354,7 @@ export default function VolunteerSignupPage() {
                     value={signupForm.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors resize-none text-gray-900 placeholder-gray-400"
                     placeholder="Tell the organization why you want to volunteer for this opportunity..."
                     disabled={isSubmitting}
                   />
