@@ -207,7 +207,10 @@ export default function OrganizationDashboard() {
     }
   };
 
-  const deleteOpportunity = (opportunityId) => {
+  const deleteOpportunity = (opportunityId, e) => {
+    // Prevent event bubbling to avoid triggering the card click
+    e.stopPropagation();
+    
     if (!confirm('Are you sure you want to delete this opportunity?')) return;
 
     try {
@@ -243,6 +246,11 @@ export default function OrganizationDashboard() {
       console.error('Error deleting opportunity:', error);
       alert('Error deleting opportunity. Please try again.');
     }
+  };
+
+  const handleOpportunityClick = (opportunityId) => {
+    // Navigate to opportunity-applications page with the opportunity ID
+    router.push(`/opportunity-applications?id=${opportunityId}`);
   };
 
   // Load application statuses when applications change
@@ -376,17 +384,12 @@ export default function OrganizationDashboard() {
           </div>
         </section>
 
-        {/* My Opportunities Section */}
+       {/* My Opportunities Section */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">My Opportunities</h2>
-              <button
-                onClick={refreshDashboard}
-                className="text-emerald-600 hover:text-emerald-700 font-medium text-sm"
-              >
-                🔄 Refresh List
-              </button>
+              <p className="text-sm text-gray-500">Click on any opportunity to view applications</p>
             </div>
             
             {myOpportunities.length === 0 ? (
@@ -408,7 +411,11 @@ export default function OrganizationDashboard() {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {myOpportunities.map((opportunity) => (
-                  <div key={opportunity.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div 
+                    key={opportunity.id} 
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md hover:border-emerald-300 transition-all duration-200"
+                    onClick={() => handleOpportunityClick(opportunity.id)}
+                  >
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
@@ -418,8 +425,8 @@ export default function OrganizationDashboard() {
                           </span>
                         </div>
                         <button
-                          onClick={() => deleteOpportunity(opportunity.id)}
-                          className="text-red-400 hover:text-red-600 p-2"
+                          onClick={(e) => deleteOpportunity(opportunity.id, e)}
+                          className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete opportunity"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -464,6 +471,17 @@ export default function OrganizationDashboard() {
                           </span>
                         </div>
                       </div>
+                      
+                      {/* Click indicator */}
+                      <div className="mt-3 flex items-center justify-center">
+                        <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          Click to view applications
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -471,7 +489,7 @@ export default function OrganizationDashboard() {
             )}
           </div>
         </section>
-
+        
         {/* Applications Section */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
@@ -520,36 +538,115 @@ export default function OrganizationDashboard() {
                         </div>
                         
                         {application.status === 'pending' && (
-                          <div className="mt-4 lg:mt-0 lg:ml-6 flex space-x-3">
-                            <button
-                              onClick={() => handleApplicationStatus(application.id, 'accepted')}
-                              className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => handleApplicationStatus(application.id, 'rejected')}
-                              className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <span className="text-sm text-gray-500">
-                          Applied on {new Date(application.appliedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </section>
-      </main>
-    </>
-  );
+  <div className="mt-4 lg:mt-0 lg:ml-6 flex space-x-3">
+    <button
+      onClick={() => handleApplicationStatus(application.id, 'accepted')}
+      className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
+    >
+      Accept
+    </button>
+    <button
+      onClick={() => handleApplicationStatus(application.id, 'rejected')}
+      className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors"
+    >
+      Reject
+    </button>
+  </div>
+)}
+</div>
+<div className="mt-4 pt-4 border-t border-gray-200">
+  <span className="text-sm text-gray-500">
+    Applied on {new Date(application.appliedAt).toLocaleDateString()}
+  </span>
+</div>
+</div>
+);
+})}
+</div>
+)}
+</div>
+</section>
+</main>
+</>
+);
 }
+
+// Additional utility functions you might want to add:
+
+// If you want to enhance the opportunity click functionality, you can add these helper functions:
+
+const handleOpportunityCardClick = (opportunityId, e) => {
+  // Prevent navigation if clicking on the delete button
+  if (e.target.closest('[data-delete-button]')) {
+    return;
+  }
+  
+  // Navigate to opportunity applications page
+  router.push(`/opportunity-applications?id=${opportunityId}`);
+};
+
+// Enhanced delete function with better UX
+const deleteOpportunityEnhanced = (opportunityId, e) => {
+  e.stopPropagation();
+  
+  const opportunity = myOpportunities.find(opp => opp.id === opportunityId);
+  const confirmMessage = `Are you sure you want to delete "${opportunity?.title}"? This action cannot be undone.`;
+  
+  if (!confirm(confirmMessage)) return;
+
+  try {
+    const opportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
+    const updatedOpportunities = opportunities.filter(opp => opp.id !== opportunityId);
+    localStorage.setItem('opportunities', JSON.stringify(updatedOpportunities));
+    
+    // Remove applications for this opportunity from all users
+    const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const updatedUsers = allUsers.map(user => {
+      if (user.userType === 'volunteer' && user.appliedOpportunities) {
+        return {
+          ...user,
+          appliedOpportunities: user.appliedOpportunities.filter(id => id !== opportunityId)
+        };
+      }
+      return user;
+    });
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    
+    // Remove application statuses for this opportunity
+    const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
+    Object.keys(applicationStatuses).forEach(key => {
+      if (key.includes(`-${opportunityId}`)) {
+        delete applicationStatuses[key];
+      }
+    });
+    localStorage.setItem('applicationStatuses', JSON.stringify(applicationStatuses));
+    
+    loadDashboardData(currentUser);
+    
+    // Show success message
+    const successDiv = document.createElement('div');
+    successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+    successDiv.textContent = 'Opportunity deleted successfully!';
+    document.body.appendChild(successDiv);
+    setTimeout(() => successDiv.remove(), 3000);
+    
+  } catch (error) {
+    console.error('Error deleting opportunity:', error);
+    alert('Error deleting opportunity. Please try again.');
+  }
+};
+
+// If you want to modify the delete button to use data attributes:
+// Replace the delete button in your JSX with:
+/*
+<button
+  onClick={(e) => deleteOpportunity(opportunity.id, e)}
+  data-delete-button="true"
+  className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
+  title="Delete opportunity"
+>
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+  </svg>
+</button>
+*/

@@ -453,7 +453,7 @@ export default function PostOpportunityPage() {
                       value={formData.maxVolunteers}
                       onChange={handleChange}
                       min="1"
-                      className={`w-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                      className={`nw-full px-4 py-3 text-gray-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
                         errors.maxVolunteers ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
