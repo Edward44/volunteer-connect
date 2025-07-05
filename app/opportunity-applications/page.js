@@ -70,6 +70,140 @@ export default function OpportunityApplications() {
     }
   ];
 
+  // Hardcoded sample volunteer applications
+  const sampleApplications = {
+    1: [ // Beach Cleanup applications
+      {
+        id: 'sample-1-1',
+        volunteerId: 'sample-vol-1',
+        opportunityId: 1,
+        volunteerName: 'Sarah Martinez',
+        volunteerEmail: 'sarah.martinez@email.com',
+        volunteerPhone: '(555) 123-4567',
+        volunteerBio: 'Environmental science student passionate about ocean conservation. I volunteer regularly with local environmental groups and love spending time outdoors.',
+        volunteerSkills: ['Environmental Awareness', 'Team Leadership', 'Data Collection', 'Public Speaking'],
+        volunteerExperience: 'Participated in 5+ beach cleanups, organized recycling drives at university, member of Environmental Club for 2 years.',
+        volunteerAvailability: 'Weekends and weekday mornings',
+        volunteerLocation: 'Santa Monica, CA',
+        opportunityTitle: 'Beach Cleanup Volunteer',
+        organization: 'Ocean Conservation Society',
+        status: 'pending',
+        appliedAt: '2025-06-10T10:30:00Z',
+        message: 'Application for Beach Cleanup Volunteer'
+      },
+      {
+        id: 'sample-1-2',
+        volunteerId: 'sample-vol-2',
+        opportunityId: 1,
+        volunteerName: 'Michael Chen',
+        volunteerEmail: 'michael.chen@email.com',
+        volunteerPhone: '(555) 234-5678',
+        volunteerBio: 'Recent graduate with a degree in Marine Biology. I believe in protecting our oceans for future generations and want to contribute to meaningful conservation efforts.',
+        volunteerSkills: ['Marine Biology', 'Research', 'Photography', 'Social Media'],
+        volunteerExperience: 'Completed marine biology internship, participated in underwater research projects, documented marine life for conservation databases.',
+        volunteerAvailability: 'Flexible schedule, available most days',
+        volunteerLocation: 'Los Angeles, CA',
+        opportunityTitle: 'Beach Cleanup Volunteer',
+        organization: 'Ocean Conservation Society',
+        status: 'accepted',
+        appliedAt: '2025-06-08T14:20:00Z',
+        message: 'Application for Beach Cleanup Volunteer'
+      },
+      {
+        id: 'sample-1-3',
+        volunteerId: 'sample-vol-3',
+        opportunityId: 1,
+        volunteerName: 'Emma Rodriguez',
+        volunteerEmail: 'emma.rodriguez@email.com',
+        volunteerPhone: '(555) 345-6789',
+        volunteerBio: 'High school senior planning to study environmental engineering. I want to make a positive impact on our environment and gain hands-on experience in conservation work.',
+        volunteerSkills: ['Organization', 'Communication', 'Problem Solving', 'Teamwork'],
+        volunteerExperience: 'Organized school environmental awareness campaigns, volunteer at local park cleanups, member of Green Club.',
+        volunteerAvailability: 'Weekends and school holidays',
+        volunteerLocation: 'Manhattan Beach, CA',
+        opportunityTitle: 'Beach Cleanup Volunteer',
+        organization: 'Ocean Conservation Society',
+        status: 'pending',
+        appliedAt: '2025-06-09T16:45:00Z',
+        message: 'Application for Beach Cleanup Volunteer'
+      }
+    ],
+    2: [ // Food Bank applications
+      {
+        id: 'sample-2-1',
+        volunteerId: 'sample-vol-4',
+        opportunityId: 2,
+        volunteerName: 'David Thompson',
+        volunteerEmail: 'david.thompson@email.com',
+        volunteerPhone: '(555) 456-7890',
+        volunteerBio: 'Retired teacher with 30 years of experience. I have a passion for helping others and want to give back to my community by addressing food insecurity.',
+        volunteerSkills: ['Teaching', 'Organization', 'Customer Service', 'Inventory Management'],
+        volunteerExperience: 'Volunteer at soup kitchen for 3 years, helped organize community food drives, experience managing classroom supplies and resources.',
+        volunteerAvailability: 'Weekdays and weekends, very flexible',
+        volunteerLocation: 'Downtown Los Angeles, CA',
+        opportunityTitle: 'Food Bank Assistant',
+        organization: 'Community Food Network',
+        status: 'accepted',
+        appliedAt: '2025-06-07T09:15:00Z',
+        message: 'Application for Food Bank Assistant'
+      },
+      {
+        id: 'sample-2-2',
+        volunteerId: 'sample-vol-5',
+        opportunityId: 2,
+        volunteerName: 'Lisa Park',
+        volunteerEmail: 'lisa.park@email.com',
+        volunteerPhone: '(555) 567-8901',
+        volunteerBio: 'Working professional who wants to volunteer during my free time. I understand the importance of food security and want to help families in need.',
+        volunteerSkills: ['Project Management', 'Logistics', 'Bilingual (English/Korean)', 'Computer Skills'],
+        volunteerExperience: 'Volunteer at local community center, helped coordinate charity events at work, experience in warehouse operations.',
+        volunteerAvailability: 'Evenings and weekends',
+        volunteerLocation: 'Koreatown, CA',
+        opportunityTitle: 'Food Bank Assistant',
+        organization: 'Community Food Network',
+        status: 'pending',
+        appliedAt: '2025-06-11T13:30:00Z',
+        message: 'Application for Food Bank Assistant'
+      },
+      {
+        id: 'sample-2-3',
+        volunteerId: 'sample-vol-6',
+        opportunityId: 2,
+        volunteerName: 'James Wilson',
+        volunteerEmail: 'james.wilson@email.com',
+        volunteerPhone: '(555) 678-9012',
+        volunteerBio: 'College student studying social work. I want to gain experience working with diverse communities and learn more about addressing social issues.',
+        volunteerSkills: ['Social Work', 'Communication', 'Cultural Sensitivity', 'Data Entry'],
+        volunteerExperience: 'Volunteer at homeless shelter, completed social work field placement, experience with community outreach programs.',
+        volunteerAvailability: 'Weekends and some weekday afternoons',
+        volunteerLocation: 'University Park, CA',
+        opportunityTitle: 'Food Bank Assistant',
+        organization: 'Community Food Network',
+        status: 'rejected',
+        appliedAt: '2025-06-06T11:45:00Z',
+        message: 'Application for Food Bank Assistant'
+      },
+      {
+        id: 'sample-2-4',
+        volunteerId: 'sample-vol-7',
+        opportunityId: 2,
+        volunteerName: 'Maria Gonzalez',
+        volunteerEmail: 'maria.gonzalez@email.com',
+        volunteerPhone: '(555) 789-0123',
+        volunteerBio: 'Mother of two who has received help from food banks in the past. I want to give back and help other families going through difficult times.',
+        volunteerSkills: ['Bilingual (English/Spanish)', 'Customer Service', 'Empathy', 'Organization'],
+        volunteerExperience: 'Volunteer at children\'s school events, helped organize neighborhood food drives, experience working with families in crisis.',
+        volunteerAvailability: 'School hours on weekdays',
+        volunteerLocation: 'East LA, CA',
+        opportunityTitle: 'Food Bank Assistant',
+        organization: 'Community Food Network',
+        status: 'pending',
+        appliedAt: '2025-06-12T08:20:00Z',
+        message: 'Application for Food Bank Assistant'
+      }
+    ]
+  };
+
   useEffect(() => {
     // Check if user is logged in and is an organization
     const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -104,59 +238,73 @@ export default function OpportunityApplications() {
         return;
       }
 
-      // Verify this opportunity belongs to the current organization
-      const belongsToOrg = (
-        targetOpportunity.organizationId === user.id ||
-        targetOpportunity.organization === user.name ||
-        targetOpportunity.organizationName === user.name ||
-        targetOpportunity.createdBy === user.id
-      );
+      // For sample opportunities (id 1-4), skip permission check
+      const isSampleOpportunity = oppId >= 1 && oppId <= 4;
+      
+      if (!isSampleOpportunity) {
+        // Verify this opportunity belongs to the current organization
+        const belongsToOrg = (
+          targetOpportunity.organizationId === user.id ||
+          targetOpportunity.organization === user.name ||
+          targetOpportunity.organizationName === user.name ||
+          targetOpportunity.createdBy === user.id
+        );
 
-      if (!belongsToOrg) {
-        alert('You do not have permission to view this opportunity');
-        router.push('/login');
-        return;
+        if (!belongsToOrg) {
+          alert('You do not have permission to view this opportunity');
+          router.push('/login');
+          return;
+        }
       }
 
       setOpportunity(targetOpportunity);
 
-      // Get all users to find applications
-      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const volunteers = allUsers.filter(u => u.userType === 'volunteer');
-      
-      // Create application objects from volunteer applied opportunities
-      const oppApplications = [];
-      
-      volunteers.forEach(volunteer => {
-        if (volunteer.appliedOpportunities && volunteer.appliedOpportunities.includes(oppId)) {
-          const applicationId = `${volunteer.id}-${oppId}`;
-          
-          // Get stored application status
-          const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
-          const status = applicationStatuses[applicationId] || 'pending';
-          
-          oppApplications.push({
-            id: applicationId,
-            volunteerId: volunteer.id,
-            opportunityId: oppId,
-            volunteerName: volunteer.name,
-            volunteerEmail: volunteer.email,
-            volunteerPhone: volunteer.phone || 'Not provided',
-            volunteerBio: volunteer.bio || 'No bio provided',
-            volunteerSkills: volunteer.skills || [],
-            volunteerExperience: volunteer.experience || 'No experience listed',
-            volunteerAvailability: volunteer.availability || 'Not specified',
-            volunteerLocation: volunteer.location || 'Not specified',
-            opportunityTitle: targetOpportunity.title,
-            organization: targetOpportunity.organization,
-            status: status,
-            appliedAt: volunteer.appliedAt || new Date().toISOString(),
-            message: `Application for ${targetOpportunity.title}`
-          });
-        }
-      });
+      // Check if this is a sample opportunity with hardcoded applications
+      if (sampleApplications[oppId]) {
+        // Load sample applications and merge with any stored status updates
+        const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
+        const applicationsWithStatus = sampleApplications[oppId].map(app => ({
+          ...app,
+          status: applicationStatuses[app.id] || app.status
+        }));
+        setApplications(applicationsWithStatus);
+      } else {
+        // Original logic for custom opportunities
+        const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        const volunteers = allUsers.filter(u => u.userType === 'volunteer');
+        
+        const oppApplications = [];
+        
+        volunteers.forEach(volunteer => {
+          if (volunteer.appliedOpportunities && volunteer.appliedOpportunities.includes(oppId)) {
+            const applicationId = `${volunteer.id}-${oppId}`;
+            
+            const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
+            const status = applicationStatuses[applicationId] || 'pending';
+            
+            oppApplications.push({
+              id: applicationId,
+              volunteerId: volunteer.id,
+              opportunityId: oppId,
+              volunteerName: volunteer.name,
+              volunteerEmail: volunteer.email,
+              volunteerPhone: volunteer.phone || 'Not provided',
+              volunteerBio: volunteer.bio || 'No bio provided',
+              volunteerSkills: volunteer.skills || [],
+              volunteerExperience: volunteer.experience || 'No experience listed',
+              volunteerAvailability: volunteer.availability || 'Not specified',
+              volunteerLocation: volunteer.location || 'Not specified',
+              opportunityTitle: targetOpportunity.title,
+              organization: targetOpportunity.organization,
+              status: status,
+              appliedAt: volunteer.appliedAt || new Date().toISOString(),
+              message: `Application for ${targetOpportunity.title}`
+            });
+          }
+        });
 
-      setApplications(oppApplications);
+        setApplications(oppApplications);
+      }
     } catch (error) {
       console.error('Error loading opportunity data:', error);
       alert('Error loading opportunity data');
