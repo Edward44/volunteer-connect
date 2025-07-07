@@ -316,80 +316,11 @@ export default function OrganizationDashboard() {
             </div>
           </div>
         </section>
-
-        {/* Dashboard Stats */}
-        <section className="py-8">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-emerald-100 rounded-lg">
-                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Active Opportunities</p>
-                    <p className="text-2xl font-bold text-gray-900">{myOpportunities.length}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Applications</p>
-                    <p className="text-2xl font-bold text-gray-900">{applications.length}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-yellow-100 rounded-lg">
-                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {applications.filter(app => app.status === 'pending').length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Approved Applications</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {applications.filter(app => app.status === 'accepted').length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
        {/* My Opportunities Section */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">My Opportunities</h2>
-              <p className="text-sm text-gray-500">Click on any opportunity to view applications</p>
             </div>
             
             {myOpportunities.length === 0 ? (
@@ -461,17 +392,6 @@ export default function OrganizationDashboard() {
                         )}
                       </div>
                       
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500">
-                            {applications.filter(app => app.opportunityId === opportunity.id).length} applications
-                          </span>
-                          <span className="text-sm text-gray-500">
-                            Created {opportunity.createdAt ? new Date(opportunity.createdAt).toLocaleDateString() : 'Recently'}
-                          </span>
-                        </div>
-                      </div>
-                      
                       {/* Click indicator */}
                       <div className="mt-3 flex items-center justify-center">
                         <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
@@ -489,164 +409,7 @@ export default function OrganizationDashboard() {
             )}
           </div>
         </section>
-        
-        {/* Applications Section */}
-        <section className="py-8">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Applications</h2>
-            
-            {applications.length === 0 ? (
-              <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No applications yet</h3>
-                <p className="text-gray-600">Applications for your opportunities will appear here.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {applications.map((application) => {
-                  const opportunity = myOpportunities.find(opp => opp.id === application.opportunityId);
-                  return (
-                    <div key={application.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center mb-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mr-3">
-                              {application.volunteerName}
-                            </h3>
-                            <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                              application.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              application.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                              'bg-red-100 text-red-800'
-                            }`}>
-                              {application.status}
-                            </span>
-                          </div>
-                          <p className="text-gray-600 mb-2">
-                            Applied for: <span className="font-medium">{opportunity?.title}</span>
-                          </p>
-                          <div className="flex items-center text-sm text-gray-500 mb-3">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            {application.volunteerEmail}
-                          </div>
-                          <p className="text-gray-700 text-sm">{application.message}</p>
-                        </div>
-                        
-                        {application.status === 'pending' && (
-  <div className="mt-4 lg:mt-0 lg:ml-6 flex space-x-3">
-    <button
-      onClick={() => handleApplicationStatus(application.id, 'accepted')}
-      className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
-    >
-      Accept
-    </button>
-    <button
-      onClick={() => handleApplicationStatus(application.id, 'rejected')}
-      className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors"
-    >
-      Reject
-    </button>
-  </div>
-)}
-</div>
-<div className="mt-4 pt-4 border-t border-gray-200">
-  <span className="text-sm text-gray-500">
-    Applied on {new Date(application.appliedAt).toLocaleDateString()}
-  </span>
-</div>
-</div>
-);
-})}
-</div>
-)}
-</div>
-</section>
-</main>
-</>
-);
+      </main>
+    </>
+  );
 }
-
-// Additional utility functions you might want to add:
-
-// If you want to enhance the opportunity click functionality, you can add these helper functions:
-
-const handleOpportunityCardClick = (opportunityId, e) => {
-  // Prevent navigation if clicking on the delete button
-  if (e.target.closest('[data-delete-button]')) {
-    return;
-  }
-  
-  // Navigate to opportunity applications page
-  router.push(`/opportunity-applications?id=${opportunityId}`);
-};
-
-// Enhanced delete function with better UX
-const deleteOpportunityEnhanced = (opportunityId, e) => {
-  e.stopPropagation();
-  
-  const opportunity = myOpportunities.find(opp => opp.id === opportunityId);
-  const confirmMessage = `Are you sure you want to delete "${opportunity?.title}"? This action cannot be undone.`;
-  
-  if (!confirm(confirmMessage)) return;
-
-  try {
-    const opportunities = JSON.parse(localStorage.getItem('opportunities') || '[]');
-    const updatedOpportunities = opportunities.filter(opp => opp.id !== opportunityId);
-    localStorage.setItem('opportunities', JSON.stringify(updatedOpportunities));
-    
-    // Remove applications for this opportunity from all users
-    const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const updatedUsers = allUsers.map(user => {
-      if (user.userType === 'volunteer' && user.appliedOpportunities) {
-        return {
-          ...user,
-          appliedOpportunities: user.appliedOpportunities.filter(id => id !== opportunityId)
-        };
-      }
-      return user;
-    });
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    
-    // Remove application statuses for this opportunity
-    const applicationStatuses = JSON.parse(localStorage.getItem('applicationStatuses') || '{}');
-    Object.keys(applicationStatuses).forEach(key => {
-      if (key.includes(`-${opportunityId}`)) {
-        delete applicationStatuses[key];
-      }
-    });
-    localStorage.setItem('applicationStatuses', JSON.stringify(applicationStatuses));
-    
-    loadDashboardData(currentUser);
-    
-    // Show success message
-    const successDiv = document.createElement('div');
-    successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-    successDiv.textContent = 'Opportunity deleted successfully!';
-    document.body.appendChild(successDiv);
-    setTimeout(() => successDiv.remove(), 3000);
-    
-  } catch (error) {
-    console.error('Error deleting opportunity:', error);
-    alert('Error deleting opportunity. Please try again.');
-  }
-};
-
-// If you want to modify the delete button to use data attributes:
-// Replace the delete button in your JSX with:
-/*
-<button
-  onClick={(e) => deleteOpportunity(opportunity.id, e)}
-  data-delete-button="true"
-  className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
-  title="Delete opportunity"
->
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-  </svg>
-</button>
-*/
