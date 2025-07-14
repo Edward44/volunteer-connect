@@ -48,11 +48,17 @@ export default function LoginPage() {
         user = volunteers.find(vol => 
           vol.email && vol.email.toLowerCase() === formData.email.toLowerCase()
         );
-      } else {
+      } else if (formData.userType === 'organization') {
         // Look for organization
         const organizations = JSON.parse(localStorage.getItem('organizations') || '[]');
         user = organizations.find(org => 
           org.email && org.email.toLowerCase() === formData.email.toLowerCase()
+        );
+      } else if (formData.userType === 'school') {
+        // Look for school in users array
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        user = users.find(u => 
+          u.email && u.email.toLowerCase() === formData.email.toLowerCase() && u.userType === 'school'
         );
       }
 
@@ -70,16 +76,16 @@ export default function LoginPage() {
         // Add a small delay to ensure localStorage is written
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        // Navigate to home page or appropriate dashboard
-        // You can change this to the specific dashboard routes once they exist
-        router.push('/');
-        
-        // Alternative: Navigate to specific dashboards when those pages are created
-        if (user.userType === 'volunteer' || formData.userType === 'volunteer') {
+        // Navigate to appropriate dashboard based on user type
+        if (formData.userType === 'volunteer') {
           router.push('/account/volunteer');
-         } else {
-           router.push('/account/organization');
-         }
+        } else if (formData.userType === 'organization') {
+          router.push('/account/organization');
+        } else if (formData.userType === 'school') {
+          router.push('/account/school');
+        } else {
+          router.push('/');
+        }
         
       } else {
         setError(`No ${formData.userType} account found with this email address. Please check your email or sign up first.`);
@@ -117,7 +123,7 @@ export default function LoginPage() {
                     <label className="block text-sm font-semibold text-gray-900 mb-4">
                       I am signing in as:
                     </label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                       <label className={`relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
                         formData.userType === 'volunteer' 
                           ? 'border-emerald-500 bg-emerald-50 text-emerald-700' 
@@ -153,6 +159,25 @@ export default function LoginPage() {
                         <div className="text-center">
                           <div className="text-2xl mb-2">🏢</div>
                           <span className="font-medium">Organization</span>
+                        </div>
+                      </label>
+
+                      <label className={`relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        formData.userType === 'school' 
+                          ? 'border-emerald-500 bg-emerald-50 text-emerald-700' 
+                          : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="userType"
+                          value="school"
+                          checked={formData.userType === 'school'}
+                          onChange={handleChange}
+                          className="sr-only"
+                        />
+                        <div className="text-center">
+                          <div className="text-2xl mb-2">🏫</div>
+                          <span className="font-medium">School Admin</span>
                         </div>
                       </label>
                     </div>
@@ -216,7 +241,7 @@ export default function LoginPage() {
                 {/* Sign Up Links */}
                 <div className="mt-8 pt-6 border-t border-gray-200">
                   <p className="text-center text-gray-600 mb-4">Don't have an account?</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <a 
                       href="/signup/volunteer" 
                       className="inline-flex items-center justify-center px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200 text-center"
@@ -230,6 +255,13 @@ export default function LoginPage() {
                     >
                       <span className="mr-2">🏢</span>
                       Join as Organization
+                    </a>
+                    <a 
+                      href="/signup/school" 
+                      className="inline-flex items-center justify-center px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200 text-center"
+                    >
+                      <span className="mr-2">🏫</span>
+                      Join as School
                     </a>
                   </div>
                 </div>
@@ -246,7 +278,7 @@ export default function LoginPage() {
           </div>
         </section>
 
-        {/* Benefits Section - Simplified */}
+        {/* Benefits Section - Updated for all user types */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Join thousands making a difference</h2>
@@ -273,6 +305,3 @@ export default function LoginPage() {
     </>
   );
 }
-
-// create opportunity page on org dashboard is great, might need to remove post a listing
-// worst case, change page view for both orgs and volunteers
