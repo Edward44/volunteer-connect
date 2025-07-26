@@ -13,10 +13,10 @@ export default function AboutUs() {
           <div className="text-center">
             <div className="mb-8">
               <span className="text-5xl font-bold text-gray-900">
-                <span className="text-emerald-600">Bono</span>
+                <span className="text-emerald-600">BONO</span>
               </span>
               <p className="text-2xl text-gray-700 mt-3 font-medium italic">
-                "*Helping You Help Others*"
+                "Helping You Help Others"
               </p>
             </div>
             <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed mb-8">
@@ -169,7 +169,7 @@ export default function AboutUs() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-emerald-600 mr-3">•</span>
-                  <span>Track hours automatically for graduation requirements</span>
+                  <span>Track hours automatically for graduation requirements and college applications</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-emerald-600 mr-3">•</span>
